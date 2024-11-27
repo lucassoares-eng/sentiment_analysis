@@ -31,11 +31,11 @@ def analyze_sentiment(review):
     # Use VADER for sentiment analysis
     scores = sia.polarity_scores(review)
 
-    # Analisa o sentimento
-    compound_score = scores['compound']
-    if compound_score >= 0.05:  # Sentimento positivo
+    # Tranforma compound score em uma base de 0 a 10 e analisa o sentimento
+    compound_score = (scores['compound'] + 1) / 2 * 10
+    if compound_score >= 9:  # Sentimento positivo
         sentiment = "Positive"
-    elif compound_score <= -0.05:  # Sentimento negativo
+    elif compound_score <= 6:  # Sentimento negativo
         sentiment = "Negative"
     else: # Sentimento neutro
         sentiment = "Neutral"
@@ -50,7 +50,7 @@ def analyze_sentiment(review):
     for sentence in sentences:
         sentence_scores = sia.polarity_scores(sentence)
         compound_score = sentence_scores['compound']
-        
+
         # Classifica a frase como positiva ou negativa
         if compound_score >= 0.05:  # Sentimento positivo
             positive_parts.append(sentence)
@@ -66,14 +66,15 @@ def analyze_sentiment(review):
     
 def calculate_star_rating(scores):
     """
-    Calculate a star rating between 1 and 5 based on sentiment scores.
+    Calculate a star rating between 1 and 5 based on the compound sentiment score.
     
     :param scores: dict, Sentiment scores from VADER.
     :return: float, Star rating between 1 and 5.
     """
-    # Weighted average of sentiment scores
-    rating = 1 + (scores["pos"] * 4)  # Map "pos" to range 1-5
-    return round(rating, 1)
+    # Transform compound score from [-1, 1] to [1, 5]
+    compound = scores['compound']
+    rating = 1 + ((compound + 1) / 2) * 4  # Map to range 1-5
+    return round(rating, 4)
 
 def detect_original_language(reviews):
     """
