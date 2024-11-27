@@ -1,0 +1,62 @@
+{
+    "nps_score": -36.33,
+    "total_reviews": 20491,
+    "promoters_count": 19,
+    "detractors_count": 7464,
+    "neutral_count": 13008,
+    "common_words": [
+        {
+            "word": "hotel",
+            "count": 49814
+        },
+        {
+            "word": "room",
+            "count": 35331
+        },
+        {
+            "word": "great",
+            "count": 21475
+        },
+        {
+            "word": "good",
+            "count": 17412
+        },
+        {
+            "word": "staff",
+            "count": 16633
+        },
+        {
+            "word": "stay",
+            "count": 15411
+        },
+        {
+            "word": "nice",
+            "count": 12643
+        },
+        {
+            "word": "rooms",
+            "count": 12401
+        },
+        {
+            "word": "location",
+            "count": 11351
+        },
+        {
+            "word": "stayed",
+            "count": 10500
+        }
+    ],
+    "most_relevant_comments": {
+        "positive": [
+            "perfect, impressive place, want clean comfy rooms great location, pleased,  ",
+            "hotel great hotel great money clean good resturant great staff worth location great,  ",
+            "regular, amazing value, stay hotel let, great beds great balconies great breakfast great staff great location great value, fantastic pool, amazing value money,  "
+        ],
+        "negative": [
+            "stay away, family stayed hotel week, did n't want honor room request n/s double 4 people claimed left king smoking, asked walked different hotel suddenly room, arrived room small linens bad shape mattress sheet, wallpaper bed badly marked, not convinced room clean, dissatisfied hotel,  ",
+            "miss hotel grubby.breakfast served cramped conditions poor quality food beveridges.air condition controlled staff switched complaining day,  ",
+            "hated inn terrible, room-service horrible staff un-welcoming, decor recently updated lacks complete look, managment staff horrible,  "
+        ]
+    },
+    "star_ratings": 2.24
+}
