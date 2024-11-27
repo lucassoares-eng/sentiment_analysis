@@ -9,6 +9,6 @@ def home():
     """
     results = load_results()
     if results:
-        return render_template("index.html", results=results)
+        return render_template("index.html", **results)
     else:
         return "Results file not found!", 404

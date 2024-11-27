@@ -1,49 +1,91 @@
 {
-    "nps_score": -36.33,
+    "nps_score": 84.24,
     "total_reviews": 20491,
-    "promoters_count": 19,
-    "detractors_count": 7464,
-    "neutral_count": 13008,
-    "common_words": [
+    "promoters_count": 18831,
+    "detractors_count": 1569,
+    "neutral_count": 91,
+    "positive_common_words": [
         {
             "word": "hotel",
-            "count": 49814
+            "count": 34028
         },
         {
             "word": "room",
-            "count": 35331
+            "count": 20680
         },
         {
             "word": "great",
-            "count": 21475
+            "count": 20455
         },
         {
             "word": "good",
-            "count": 17412
+            "count": 15735
         },
         {
             "word": "staff",
-            "count": 16633
-        },
-        {
-            "word": "stay",
-            "count": 15411
+            "count": 13210
         },
         {
             "word": "nice",
-            "count": 12643
+            "count": 11841
         },
         {
-            "word": "rooms",
-            "count": 12401
+            "word": "stay",
+            "count": 10629
         },
         {
             "word": "location",
-            "count": 11351
+            "count": 9672
         },
         {
-            "word": "stayed",
-            "count": 10500
+            "word": "clean",
+            "count": 9050
+        },
+        {
+            "word": "rooms",
+            "count": 7960
+        }
+    ],
+    "negative_common_words": [
+        {
+            "word": "hotel",
+            "count": 6734
+        },
+        {
+            "word": "room",
+            "count": 6184
+        },
+        {
+            "word": "staff",
+            "count": 1924
+        },
+        {
+            "word": "night",
+            "count": 1855
+        },
+        {
+            "word": "rooms",
+            "count": 1838
+        },
+        {
+            "word": "day",
+            "count": 1803
+        },
+        {
+            "word": "food",
+            "count": 1797
+        },
+        {
+            "word": "service",
+            "count": 1795
+        },
+        {
+            "word": "problem",
+            "count": 1780
+        },
+        {
+            "word": "stay",
+            "count": 1756
         }
     ],
     "most_relevant_comments": {
