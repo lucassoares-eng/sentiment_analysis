@@ -1,5 +1,4 @@
 import os
-import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 import nltk
 import re
@@ -9,6 +8,7 @@ from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 from nltk.sentiment import SentimentIntensityAnalyzer
 from collections import Counter
+from app.utils import load_file
 
 # Initialize the VADER sentiment analyzer for English
 sia = SentimentIntensityAnalyzer()
@@ -41,7 +41,10 @@ def analyze_sentiment(review):
         sentiment = "Neutral"
 
     # Divide o review em frases
-    sentences = re.split(r'(?<=[.,;!?])\s+', review)
+    try:
+        sentences = split_review_into_sentences(review)
+    except:
+        sentences = [review]
 
     positive_parts = []
     negative_parts = []
@@ -53,9 +56,9 @@ def analyze_sentiment(review):
 
         # Classifica a frase como positiva ou negativa
         if compound_score >= 0.05:  # Sentimento positivo
-            positive_parts.append(sentence)
+            positive_parts.append((sentence, compound_score))  # Adiciona frase e score como tupla
         elif compound_score <= -0.05:  # Sentimento negativo
-            negative_parts.append(sentence)
+            negative_parts.append((sentence, compound_score))  # Adiciona frase e score como tupla
 
     return {
         "scores": scores,
@@ -63,6 +66,26 @@ def analyze_sentiment(review):
         "positive_parts": positive_parts,
         "negative_parts": negative_parts
     }
+
+def split_review_into_sentences(review, max_words=20):
+    # Divisão inicial por delimitadores comuns de sentenças
+    sentences = re.split(r'(?<=[.,;!?])\s*', review)
+    
+    # Remove strings vazias e espaços desnecessários
+    sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
+    
+    # Divisão adicional para sentenças muito longas
+    refined_sentences = []
+    for sentence in sentences:
+        words = sentence.split()  # Divide a sentença em palavras
+        if len(words) > max_words:
+            # Quebra em blocos de no máximo max_words palavras
+            for i in range(0, len(words), max_words):
+                refined_sentences.append(" ".join(words[i:i + max_words]))
+        else:
+            refined_sentences.append(sentence)
+    
+    return refined_sentences
     
 def calculate_star_rating(scores):
     """
@@ -133,15 +156,7 @@ def analyze(dataset_path=DEFAULT_DATASET):
     Returns:
         dict: Results of the analysis.
     """
-    if not os.path.exists(dataset_path):
-        raise FileNotFoundError(f"The dataset at {dataset_path} does not exist.")
-    
-    # Load the dataset
-    data = pd.read_csv(dataset_path)
-
-    # Rename the first column to "Review" using the rename method
-    data.rename(columns={data.columns[0]: "Review"}, inplace=True)
-    
+    data = load_file(dataset_path)
     reviews = data["Review"]
     sentiments = []
     sentiment_scores = []
@@ -191,15 +206,20 @@ def analyze(dataset_path=DEFAULT_DATASET):
     passives = data[data["sentiment"] == "Neutral"]
     promoters = data[data["sentiment"] == "Positive"]
 
-    positive_common_words = generate_common_words(positive_parts, original_language, translator)
-    negative_common_words = generate_common_words(negative_parts, original_language, translator)
+    # Extraindo apenas o texto das tuplas (primeiro elemento)
+    positive_sentences = [sentence for sentence, _ in positive_parts]
+    negative_sentences = [sentence for sentence, _ in negative_parts]
 
-    # Ordenar os dados com base nas estrelas
-    sorted_by_star = data.sort_values(by="star_rating", ascending=False)
+    positive_common_words = generate_common_words(positive_sentences, original_language, translator)
+    negative_common_words = generate_common_words(negative_sentences, original_language, translator)
 
-    # Extract most relevant comments based on star ratings
-    most_relevant_positive = sorted_by_star.head(3)["Review"].tolist()
-    most_relevant_negative = sorted_by_star.tail(3)["Review"].tolist()
+    # Ordena os comentários positivos e negativos pelas pontuações
+    sorted_positive_parts = sorted(positive_parts, key=lambda x: x[1], reverse=True)  # Ordena por score decrescente
+    sorted_negative_parts = sorted(negative_parts, key=lambda x: x[1])  # Ordena por score crescente
+
+    # Extrai os 3 comentários mais relevantes (positivos e negativos)
+    most_relevant_positive = [comment for comment, score in sorted_positive_parts[:3]]
+    most_relevant_negative = [comment for comment, score in sorted_negative_parts[:3]]
 
     # Calculate the overall star rating (average)
     overall_star_rating = round(sum(star_ratings) / len(star_ratings), 2)

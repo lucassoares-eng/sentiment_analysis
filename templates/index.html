@@ -39,6 +39,23 @@
     <div class="container my-5">
         <h1 class="text-center text-primary mb-4">Sentiment Analysis Dashboard</h1>
         
+        <!-- Upload Form -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header text-center">
+                        Upload a File for Analysis
+                    </div>
+                    <div class="card-body">
+                        <form action="/upload" method="POST" enctype="multipart/form-data" class="d-flex flex-column align-items-center">
+                            <input type="file" name="file" class="form-control mb-3" style="max-width: 400px;">
+                            <button type="submit" class="btn btn-primary">Upload and Analyze</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- NPS Section -->
         <div class="row mb-4">
             <div class="col-md-6">
