@@ -63,8 +63,12 @@ def load_file(dataset_path):
     if not os.path.exists(dataset_path):
         raise FileNotFoundError(f"The dataset at {dataset_path} does not exist.")
     
-    # Load the dataset
-    data = pd.read_csv(dataset_path)
+    try:
+        # Attempt to load the dataset with UTF-8 encoding
+        data = pd.read_csv(dataset_path, encoding='utf-8')
+    except UnicodeDecodeError:
+        # Fallback to 'latin1' encoding in case of a decoding error
+        data = pd.read_csv(dataset_path, encoding='latin1')
 
     # Rename the first column to "Review" using the rename method
     data.rename(columns={data.columns[0]: "Review"}, inplace=True)

@@ -8,6 +8,8 @@ from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 from nltk.sentiment import SentimentIntensityAnalyzer
 from collections import Counter
+
+from tqdm import tqdm
 from app.utils import load_file
 
 # Initialize the VADER sentiment analyzer for English
@@ -15,50 +17,73 @@ sia = SentimentIntensityAnalyzer()
 
 # Baixe a lista de stop words and 
 nltk.download("stopwords")
-nltk_stop_words = set(stopwords.words("english"))
 
 DEFAULT_DATASET = os.path.join("data", "tripadvisor_hotel_reviews.csv")
 
-def analyze_sentiment(review):
+def analyze_sentiment(review, original_language):
     """
     Split a review into positive and negative parts based on sentiment analysis.
 
     :param review: str, Input review to analyze
+    :param original_language: str, Language code of the original review
     :return: dict, containing:
-        - positive_parts: list of str, Positive sentences from the review
-        - negative_parts: list of str, Negative sentences from the review
+        - scores: dict, Sentiment scores of the entire review
+        - sentiment: str, Overall sentiment of the review
+        - positive_parts: list of dict, Positive sentences with original and score
+        - negative_parts: list of dict, Negative sentences with original and score
     """
-    # Use VADER for sentiment analysis
-    scores = sia.polarity_scores(review)
+    translator = Translator()
 
-    # Tranforma compound score em uma base de 0 a 10 e analisa o sentimento
+    # Translate the full review to English for overall sentiment analysis
+    try:
+        translated_review = translator.translate(review, src=original_language, dest="en").text
+    except Exception as e:
+        print(f"Error translating review to English: {e}")
+        translated_review = review  # Fallback to the original text
+
+    # Use VADER for sentiment analysis on the entire review
+    scores = sia.polarity_scores(translated_review)
+
+    # Determine overall sentiment
     compound_score = (scores['compound'] + 1) / 2 * 10
-    if compound_score >= 9:  # Sentimento positivo
+    if compound_score >= 9:
         sentiment = "Positive"
-    elif compound_score <= 6:  # Sentimento negativo
+    elif compound_score <= 6:
         sentiment = "Negative"
-    else: # Sentimento neutro
+    else:
         sentiment = "Neutral"
 
-    # Divide o review em frases
+    # Split the original review into sentences
     try:
         sentences = split_review_into_sentences(review)
-    except:
+    except Exception as e:
+        print(f"Error splitting review into sentences: {e}")
         sentences = [review]
 
     positive_parts = []
     negative_parts = []
 
-    # Analisa o sentimento de cada frase
+    # Analyze each sentence
     for sentence in sentences:
-        sentence_scores = sia.polarity_scores(sentence)
-        compound_score = sentence_scores['compound']
+        try:
+            translated_sentence = translator.translate(sentence, src=original_language, dest="en").text
+            sentence_scores = sia.polarity_scores(translated_sentence)
+            compound_score = sentence_scores['compound']
 
-        # Classifica a frase como positiva ou negativa
-        if compound_score >= 0.05:  # Sentimento positivo
-            positive_parts.append((sentence, compound_score))  # Adiciona frase e score como tupla
-        elif compound_score <= -0.05:  # Sentimento negativo
-            negative_parts.append((sentence, compound_score))  # Adiciona frase e score como tupla
+            # Classify the sentence
+            if compound_score >= 0.05:  # Positive sentiment
+                positive_parts.append({
+                    "original": sentence,
+                    "score": compound_score
+                })
+            elif compound_score <= -0.05:  # Negative sentiment
+                negative_parts.append({
+                    "original": sentence,
+                    "score": compound_score
+                })
+        except Exception as e:
+            print(f"Error analyzing sentence: {e}")
+            continue
 
     return {
         "scores": scores,
@@ -118,31 +143,53 @@ def detect_original_language(reviews):
     return "en"  # Default to English if detection fails
 
 # Function to generate most common words for positive and negative parts
-def generate_common_words(parts, original_language, translator):
-    stop_words = list(nltk_stop_words)
-    vectorizer = CountVectorizer(stop_words=stop_words)
+def generate_common_words(parts, original_language):
+    """
+    Generate the most common words from a list of text parts.
+
+    Args:
+        parts (list): List of text parts in the original language.
+        original_language (str): Language code (e.g., "en", "pt").
+
+    Returns:
+        list: A list of dictionaries containing the most common words and their counts.
+    """
+    # Mapping of language codes to NLTK stop words languages
+    language_map = {
+        "en": "english", "pt": "portuguese", "es": "spanish", "fr": "french",
+        "de": "german", "it": "italian", "nl": "dutch", "sv": "swedish",
+    }
+    
+    # Determine the stop words language
+    stop_words_language = language_map.get(original_language, "english")
+    
+    # Load stop words based on the detected language
+    try:
+        stop_words = set(stopwords.words(stop_words_language))
+    except OSError:
+        # Fallback to English if stop words are unavailable for the detected language
+        stop_words = set(stopwords.words("english"))
+    
+    # Initialize CountVectorizer with stop words
+    vectorizer = CountVectorizer(stop_words=list(stop_words))
+    
+    # Fit and transform the input text parts
     word_counts = vectorizer.fit_transform(parts)
+    
+    # Sum word occurrences and retrieve vocabulary
     word_sum = word_counts.sum(axis=0)
     words_freq = [
         (word, word_sum[0, idx])
         for word, idx in vectorizer.vocabulary_.items()
     ]
+    
+    # Get the 10 most common words
     most_common_words = sorted(words_freq, key=lambda x: x[1], reverse=True)[:10]
-
-    # Convert most common words to original language
-    original_language_words = []
-    for word, count in most_common_words:
-        try:
-            if original_language != "en":
-                # Convert to original language
-                original_word = translator.translate(word, src="en", dest=original_language).text
-            else:
-                original_word = word
-            original_language_words.append({"word": original_word, "count": count})
-        except Exception as e:
-            print(f"Error translating word '{word}': {e}")
-            original_language_words.append({"word": word, "count": count})
-    return original_language_words
+    
+    # Format the results as a list of dictionaries
+    formatted_words = [{"word": word, "count": count} for word, count in most_common_words]
+    
+    return formatted_words
 
 def analyze(dataset_path=DEFAULT_DATASET):
     """
@@ -167,16 +214,11 @@ def analyze(dataset_path=DEFAULT_DATASET):
     # Detect the predominant language
     original_language = detect_original_language(reviews)
 
-    # Initialize translator
-    translator = Translator()
-
     # Analyze sentiment for each review
-    for review in reviews:
+    print('Analisando reviews..')
+    for review in tqdm(reviews):
         try:
-            # Translate non-English reviews to English
-            if original_language != "en":
-                review = translator.translate(review, src=original_language, dest="en").text
-            analyze_result = analyze_sentiment(review)
+            analyze_result = analyze_sentiment(review, original_language)
             sentiment_scores.append(analyze_result['scores'])
             sentiments.append(analyze_result['sentiment'])
             star_rating = calculate_star_rating(analyze_result['scores'])  # Calculate star rating
@@ -207,19 +249,19 @@ def analyze(dataset_path=DEFAULT_DATASET):
     promoters = data[data["sentiment"] == "Positive"]
 
     # Extraindo apenas o texto das tuplas (primeiro elemento)
-    positive_sentences = [sentence for sentence, _ in positive_parts]
-    negative_sentences = [sentence for sentence, _ in negative_parts]
+    positive_sentences = [entry['original'] for entry in positive_parts]
+    negative_sentences = [entry['original'] for entry in negative_parts]
 
-    positive_common_words = generate_common_words(positive_sentences, original_language, translator)
-    negative_common_words = generate_common_words(negative_sentences, original_language, translator)
+    positive_common_words = generate_common_words(positive_sentences, original_language)
+    negative_common_words = generate_common_words(negative_sentences, original_language)
 
     # Ordena os comentários positivos e negativos pelas pontuações
-    sorted_positive_parts = sorted(positive_parts, key=lambda x: x[1], reverse=True)  # Ordena por score decrescente
-    sorted_negative_parts = sorted(negative_parts, key=lambda x: x[1])  # Ordena por score crescente
+    sorted_positive_parts = sorted(positive_parts, key=lambda x: x['score'], reverse=True)  # Ordena por score decrescente
+    sorted_negative_parts = sorted(negative_parts, key=lambda x: x['score'])  # Ordena por score crescente
 
     # Extrai os 3 comentários mais relevantes (positivos e negativos)
-    most_relevant_positive = [comment for comment, score in sorted_positive_parts[:3]]
-    most_relevant_negative = [comment for comment, score in sorted_negative_parts[:3]]
+    most_relevant_positive = [entry['original'] for entry in sorted_positive_parts[:3]]
+    most_relevant_negative = [entry['original'] for entry in sorted_negative_parts[:3]]
 
     # Calculate the overall star rating (average)
     overall_star_rating = round(sum(star_ratings) / len(star_ratings), 2)
