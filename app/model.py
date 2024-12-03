@@ -11,13 +11,14 @@ from collections import Counter
 from multiprocessing import Pool, Manager
 from app.utils import load_file
 
-# Initialize the VADER sentiment analyzer for English
-sia = SentimentIntensityAnalyzer()
-
-# Baixe a lista de stop words and 
-nltk.download("stopwords")
+if __name__ == "__main__":
+    # Download the list of stop words
+    nltk.download("stopwords")
 
 DEFAULT_DATASET = os.path.join("data", "tripadvisor_hotel_reviews.csv")
+
+# Initialize the VADER sentiment analyzer for English
+sia = SentimentIntensityAnalyzer()
 
 def analyze_sentiment(review, original_language):
     """
@@ -98,18 +99,18 @@ def analyze_sentiment(review, original_language):
     }
 
 def split_review_into_sentences(review, max_words=20):
-    # Divisão inicial por delimitadores comuns de sentenças
+    # Initial split by common sentence delimiters
     sentences = re.split(r'(?<=[.,;!?])\s*', review)
     
-    # Remove strings vazias e espaços desnecessários
+    # Remove empty strings and unnecessary spaces
     sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
     
-    # Divisão adicional para sentenças muito longas
+    # Additional splitting for very long sentences
     refined_sentences = []
     for sentence in sentences:
-        words = sentence.split()  # Divide a sentença em palavras
+        words = sentence.split()  # Split the sentence into words
         if len(words) > max_words:
-            # Quebra em blocos de no máximo max_words palavras
+            # Break into chunks of at most max_words words
             for i in range(0, len(words), max_words):
                 refined_sentences.append(" ".join(words[i:i + max_words]))
         else:
@@ -196,17 +197,17 @@ def generate_common_words(parts, original_language):
     
     return formatted_words
 
-# Função para processar um único review
+# Function to process a single review
 def process_review(review, original_language, sentiment_list, score_list, star_list, positive_list, negative_list):
     try:
         analyze_result = analyze_sentiment(review, original_language)
         sentiment_score = analyze_result['scores']
         sentiment = analyze_result['sentiment']
-        star_rating = calculate_star_rating(sentiment_score)  # Calcula a classificação em estrelas
+        star_rating = calculate_star_rating(sentiment_score)  # Calculates the star rating
         positive_parts = analyze_result['positive_parts']
         negative_parts = analyze_result['negative_parts']
 
-        # Armazenando os resultados nas listas compartilhadas
+        # Storing results in shared lists
         sentiment_list.append(sentiment)
         score_list.append(sentiment_score)
         star_list.append(star_rating)
@@ -222,9 +223,9 @@ def process_review(review, original_language, sentiment_list, score_list, star_l
 
 def analyze(dataset_path=DEFAULT_DATASET):
     """
-    Analyzes the sentiment of hotel reviews, calculates NPS score, and returns
-    detailed results, including most common words, sentiment distribution,
-    number of reviews, detractors, promoters, and most relevant comments.
+    Analyzes the sentiment of hotel reviews, calculates the NPS score, and returns
+    detailed results, including the most common words, sentiment distribution,
+    number of reviews, detractors, promoters, and the most relevant comments.
     
     Args:
         dataset_path (str): Path to the dataset file (.csv).
@@ -235,7 +236,7 @@ def analyze(dataset_path=DEFAULT_DATASET):
     data = load_file(dataset_path)
     reviews = data["Review"]
 
-    # Criando o Manager para compartilhar as listas entre os processos
+    # Creating a Manager to share lists between processes
     with Manager() as manager:
         sentiment_list = manager.list()
         score_list = manager.list()
@@ -246,20 +247,20 @@ def analyze(dataset_path=DEFAULT_DATASET):
         # Detect the predominant language
         original_language = detect_original_language(reviews)
 
-        # Usando Pool para processamento paralelo
-        print('Analisando reviews..')
+        # Using Pool for parallel processing
+        print('Analyzing reviews...')
         with Pool() as pool:
-            # Passando as listas compartilhadas para o pool
+            # Passing the shared lists to the pool
             pool.starmap(process_review, [(review, original_language, sentiment_list, score_list, star_list, positive_list, negative_list) for review in reviews])
 
-        # Convertendo as listas de volta para listas normais após o processamento
+        # Converting the shared lists back to normal lists after processing
         sentiments = list(sentiment_list)
         sentiment_scores = list(score_list)
         star_ratings = list(star_list)
         positive_parts = list(positive_list)
         negative_parts = list(negative_list)
 
-    # Atualizando o DataFrame com os resultados
+    # Updating the DataFrame with results
     data["sentiment"] = sentiments
     data["sentiment_scores"] = sentiment_scores
     data["star_rating"] = star_ratings
@@ -275,18 +276,18 @@ def analyze(dataset_path=DEFAULT_DATASET):
     passives = data[data["sentiment"] == "Neutral"]
     promoters = data[data["sentiment"] == "Positive"]
 
-    # Extraindo apenas o texto das tuplas (primeiro elemento)
+    # Extract only the text from tuples (first element)
     positive_sentences = [entry['original'] for entry in positive_parts]
     negative_sentences = [entry['original'] for entry in negative_parts]
 
     positive_common_words = generate_common_words(positive_sentences, original_language)
     negative_common_words = generate_common_words(negative_sentences, original_language)
 
-    # Ordena os comentários positivos e negativos pelas pontuações
-    sorted_positive_parts = sorted(positive_parts, key=lambda x: x['score'], reverse=True)  # Ordena por score decrescente
-    sorted_negative_parts = sorted(negative_parts, key=lambda x: x['score'])  # Ordena por score crescente
+    # Sort positive and negative comments by their scores
+    sorted_positive_parts = sorted(positive_parts, key=lambda x: x['score'], reverse=True)  # Descending by score
+    sorted_negative_parts = sorted(negative_parts, key=lambda x: x['score'])  # Ascending by score
 
-    # Extrai os 3 comentários mais relevantes (positivos e negativos)
+    # Extract the 3 most relevant comments (positive and negative)
     most_relevant_positive = [entry['original'] for entry in sorted_positive_parts[:3]]
     most_relevant_negative = [entry['original'] for entry in sorted_negative_parts[:3]]
 

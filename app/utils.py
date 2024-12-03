@@ -10,13 +10,13 @@ RESULTS_FILE = os.path.join(STATIC_FOLDER, "results.json")
 ALLOWED_EXTENSIONS = {'csv'}
 UPLOAD_FOLDER = "uploads"
 
-# Ensure folders exists
+# Ensure folders exist
 os.makedirs(DATA_FOLDER, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def convert_to_serializable(obj):
     """
-    Recursively convert non-serializable objects (e.g., np.int64, np.float64) into serializable Python types.
+    Recursively converts non-serializable objects (e.g., np.int64, np.float64) into serializable Python types.
     """
     if isinstance(obj, (np.int64, np.int32)):
         return int(obj)
@@ -32,16 +32,16 @@ def save_results(results):
     """
     Save the analysis results as a JSON file in the static folder.
     
-    :param results: dict, Analysis results to save
+    :param results: dict, Analysis results to save.
     """
-    # Cria a pasta static se não existir
+    # Create the static folder if it does not exist
     if not os.path.exists(STATIC_FOLDER):
         os.makedirs(STATIC_FOLDER)
     
-    # Converte o dicionário inteiro para tipos serializáveis
+    # Convert the entire dictionary to serializable types
     serializable_results = convert_to_serializable(results)
 
-    # Salva os resultados no arquivo JSON
+    # Save the results to a JSON file
     with open(RESULTS_FILE, "w", encoding="utf-8") as f:
         json.dump(serializable_results, f, indent=4, ensure_ascii=False)
 
@@ -54,11 +54,11 @@ def load_results():
             return json.load(f)
     return None
 
-# Função para verificar extensão de arquivo permitida
+# Function to verify allowed file extensions
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Função para carregar dados de um arquivo
+# Function to load data from a file
 def load_file(dataset_path):
     if not os.path.exists(dataset_path):
         raise FileNotFoundError(f"The dataset at {dataset_path} does not exist.")
@@ -70,19 +70,19 @@ def load_file(dataset_path):
         # Fallback to 'latin1' encoding in case of a decoding error
         data = pd.read_csv(dataset_path, encoding='latin1')
 
-    # Rename the first column to "Review" using the rename method
+    # Rename the first column to "Review"
     data.rename(columns={data.columns[0]: "Review"}, inplace=True)
     
     return data
 
-# Função para excluir o arquivo após o processamento
+# Function to delete a file after processing
 def delete_file(file_path):
-    """Exclui o arquivo fornecido."""
+    """Deletes the specified file."""
     if os.path.exists(file_path):
         os.remove(file_path)
 
 def save_file(uploaded_file):
-    # Salva o arquivo temporariamente
+    # Save the file temporarily
     file_path = os.path.join(UPLOAD_FOLDER, uploaded_file.filename)
     uploaded_file.save(file_path)
     return file_path
