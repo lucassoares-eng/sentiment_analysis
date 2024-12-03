@@ -8,6 +8,7 @@ from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 from nltk.sentiment import SentimentIntensityAnalyzer
 from collections import Counter
+from multiprocessing import Pool, Manager
 
 from tqdm import tqdm
 from app.utils import load_file
@@ -191,6 +192,30 @@ def generate_common_words(parts, original_language):
     
     return formatted_words
 
+# Função para processar um único review
+def process_review(review, original_language, sentiment_list, score_list, star_list, positive_list, negative_list):
+    try:
+        analyze_result = analyze_sentiment(review, original_language)
+        sentiment_score = analyze_result['scores']
+        sentiment = analyze_result['sentiment']
+        star_rating = calculate_star_rating(sentiment_score)  # Calcula a classificação em estrelas
+        positive_parts = analyze_result['positive_parts']
+        negative_parts = analyze_result['negative_parts']
+
+        # Armazenando os resultados nas listas compartilhadas
+        sentiment_list.append(sentiment)
+        score_list.append(sentiment_score)
+        star_list.append(star_rating)
+        positive_list.extend(positive_parts)
+        negative_list.extend(negative_parts)
+    except Exception as e:
+        print(f"Error analyzing review: {e}")
+        sentiment_list.append("Error")
+        score_list.append({})
+        star_list.append(3)  # Default star rating in case of error
+        positive_list.extend([])
+        negative_list.extend([])
+
 def analyze(dataset_path=DEFAULT_DATASET):
     """
     Analyzes the sentiment of hotel reviews, calculates NPS score, and returns
@@ -205,34 +230,32 @@ def analyze(dataset_path=DEFAULT_DATASET):
     """
     data = load_file(dataset_path)
     reviews = data["Review"]
-    sentiments = []
-    sentiment_scores = []
-    star_ratings = []
-    positive_parts = []
-    negative_parts = []
 
-    # Detect the predominant language
-    original_language = detect_original_language(reviews)
+    # Criando o Manager para compartilhar as listas entre os processos
+    with Manager() as manager:
+        sentiment_list = manager.list()
+        score_list = manager.list()
+        star_list = manager.list()
+        positive_list = manager.list()
+        negative_list = manager.list()
 
-    # Analyze sentiment for each review
-    print('Analisando reviews..')
-    for review in tqdm(reviews):
-        try:
-            analyze_result = analyze_sentiment(review, original_language)
-            sentiment_scores.append(analyze_result['scores'])
-            sentiments.append(analyze_result['sentiment'])
-            star_rating = calculate_star_rating(analyze_result['scores'])  # Calculate star rating
-            star_ratings.append(star_rating)
-            for positive_part in analyze_result['positive_parts']:
-                positive_parts.append(positive_part)
-            for negative_part in analyze_result['negative_parts']:
-                negative_parts.append(negative_part)
-        except Exception as e:
-            print(f"Error analyzing review: {e}")
-            sentiments.append("Error")
-            sentiment_scores.append({})
-            star_ratings.append(3)  # Default to 3 star in case of error
+        # Detect the predominant language
+        original_language = detect_original_language(reviews)
 
+        # Usando Pool para processamento paralelo
+        print('Analisando reviews..')
+        with Pool() as pool:
+            # Passando as listas compartilhadas para o pool
+            pool.starmap(process_review, [(review, original_language, sentiment_list, score_list, star_list, positive_list, negative_list) for review in reviews])
+
+        # Convertendo as listas de volta para listas normais após o processamento
+        sentiments = list(sentiment_list)
+        sentiment_scores = list(score_list)
+        star_ratings = list(star_list)
+        positive_parts = list(positive_list)
+        negative_parts = list(negative_list)
+
+    # Atualizando o DataFrame com os resultados
     data["sentiment"] = sentiments
     data["sentiment_scores"] = sentiment_scores
     data["star_rating"] = star_ratings
