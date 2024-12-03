@@ -9,8 +9,6 @@ from langdetect.lang_detect_exception import LangDetectException
 from nltk.sentiment import SentimentIntensityAnalyzer
 from collections import Counter
 from multiprocessing import Pool, Manager
-
-from tqdm import tqdm
 from app.utils import load_file
 
 # Initialize the VADER sentiment analyzer for English
@@ -33,13 +31,16 @@ def analyze_sentiment(review, original_language):
         - positive_parts: list of dict, Positive sentences with original and score
         - negative_parts: list of dict, Negative sentences with original and score
     """
-    translator = Translator()
 
     # Translate the full review to English for overall sentiment analysis
-    try:
-        translated_review = translator.translate(review, src=original_language, dest="en").text
-    except Exception as e:
-        print(f"Error translating review to English: {e}")
+    if original_language != 'en':
+        translator = Translator()
+        try:
+            translated_review = translator.translate(review, src=original_language, dest="en").text
+        except Exception as e:
+            print(f"Error translating review to English: {e}")
+            translated_review = review  # Fallback to the original text
+    else:
         translated_review = review  # Fallback to the original text
 
     # Use VADER for sentiment analysis on the entire review
@@ -67,7 +68,10 @@ def analyze_sentiment(review, original_language):
     # Analyze each sentence
     for sentence in sentences:
         try:
-            translated_sentence = translator.translate(sentence, src=original_language, dest="en").text
+            if original_language != 'en':
+                translated_sentence = translator.translate(sentence, src=original_language, dest="en").text
+            else:
+                translated_sentence = sentence
             sentence_scores = sia.polarity_scores(translated_sentence)
             compound_score = sentence_scores['compound']
 
