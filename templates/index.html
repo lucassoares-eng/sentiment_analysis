@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Resultados</title>
-    <!-- Incluindo o Chart.js e D3.js -->
+    <title>Results Dashboard</title>
+    <!-- Including Chart.js and D3.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -56,7 +56,7 @@
             text-align: center;
         }
 
-        /* Responsividade para NPS e Star Ratings */
+        /* Responsiveness for NPS and Star Ratings */
         @media (max-width: 768px) {
             .columns-container {
                 flex-direction: column;
@@ -66,17 +66,17 @@
                 margin-bottom: 20px;
             }
             #npsGauge {
-                max-width: 300px; /* Ajuste do tamanho do NPS em dispositivos móveis */
+                max-width: 300px; /* Adjust NPS size on mobile devices */
             }
             #starRatings {
-                max-width: 300px; /* Ajuste do tamanho do star rating */
+                max-width: 300px; /* Adjust star rating size */
             }
         }
     </style>
 </head>
 <body>
     <div class="content-container">
-        <h1>Dashboard de Resultados de Pesquisa</h1>
+        <h1>Survey Results Dashboard</h1>
 
         <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; margin-top: 20px;">
             <!-- Net Promoter Score (NPS) -->
@@ -87,7 +87,7 @@
         
             <!-- Star Ratings -->
             <div style="text-align: center; width: 45%; min-width: 300px;">
-                <h2>Avaliação Geral</h2>
+                <h2>Overall Rating</h2>
                 <div id="starRatings" class="star-rating">
                     <div style="font-size: 2rem; margin-bottom: 1px;">
                         {{ "%.1f" | format(star_ratings) }} / 5
@@ -95,23 +95,23 @@
                     <style>
                         .stars-container {
                             display: inline-block;
-                            font-size: 4rem; /* Aumenta o tamanho das estrelas */
-                            color: #ddd; /* Cor padrão para estrelas vazias */
+                            font-size: 4rem; /* Increase star size */
+                            color: #ddd; /* Default color for empty stars */
                             position: relative;
                         }
         
                         .stars-container::before {
-                            content: '★★★★★'; /* Estrelas vazias */
+                            content: '★★★★★'; /* Empty stars */
                             z-index: 1;
                         }
         
                         .stars-container::after {
-                            content: '★★★★★'; /* Estrelas preenchidas */
+                            content: '★★★★★'; /* Filled stars */
                             position: absolute;
                             top: 0;
                             left: 0;
-                            width: calc({{ star_ratings }} / 5 * 100%); /* Proporção de estrelas preenchidas */
-                            color: #ffd700; /* Cor das estrelas preenchidas */
+                            width: calc({{ star_ratings }} / 5 * 100%); /* Proportion of filled stars */
+                            color: #ffd700; /* Color for filled stars */
                             overflow: hidden;
                             z-index: 2;
                         }
@@ -121,15 +121,15 @@
             </div>
         </div>
 
-        <!-- Colunas com as seções de palavras e comentários -->
+        <!-- Columns with words and comments sections -->
         <div class="columns-container">
-            <!-- Card para palavras positivas -->
+            <!-- Card for positive words -->
             <div class="column">
                 <div class="card">
-                    <h2>Palavras Positivas Mais Comuns</h2>
-                    <img src="/static/positive_wordcloud.png" alt="Nuvem de Palavras Positivas" id="positiveWordCloud">
+                    <h2>Most Common Positive Words</h2>
+                    <img src="/static/positive_wordcloud.png" alt="Positive Words Word Cloud" id="positiveWordCloud">
                     
-                    <h2>Comentários Positivos</h2>
+                    <h2>Positive Comments</h2>
                     <ul>
                         {% for comment in most_relevant_comments['positive'] %}
                             <li>{{ comment }}</li>
@@ -138,13 +138,13 @@
                 </div>
             </div>
 
-            <!-- Card para palavras negativas -->
+            <!-- Card for negative words -->
             <div class="column">
                 <div class="card">
-                    <h2>Palavras Negativas Mais Comuns</h2>
-                    <img src="/static/negative_wordcloud.png" alt="Nuvem de Palavras Negativas" id="negativeWordCloud">
+                    <h2>Most Common Negative Words</h2>
+                    <img src="/static/negative_wordcloud.png" alt="Negative Words Word Cloud" id="negativeWordCloud">
                     
-                    <h2>Comentários Negativos</h2>
+                    <h2>Negative Comments</h2>
                     <ul>
                         {% for comment in most_relevant_comments['negative'] %}
                             <li>{{ comment }}</li>
@@ -169,7 +169,7 @@
         const npsGauge = new Chart(npsGaugeCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Detratores', 'Neutros', 'Promotores'],
+                labels: ['Detractors', 'Neutral', 'Promoters'],
                 datasets: [{
                     data: [detractorsCount, neutralCount, promotersCount],
                     backgroundColor: ['#ff6384', '#ffcd56', '#36a2eb'],
