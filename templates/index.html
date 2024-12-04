@@ -1,151 +1,205 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentiment Analysis Results</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Dashboard de Resultados</title>
+    <!-- Incluindo o Chart.js e D3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wordcloud2.js"></script>
     <style>
         body {
-            background-color: #f8f9fa;
-            color: #343a40;
+            font-family: Arial, sans-serif;
         }
         .card {
-            border: none;
-            border-radius: 10px;
+            background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin: 20px;
+            padding: 20px;
         }
-        .card-header {
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
+        .card h2 {
+            text-align: center;
+            margin-bottom: 15px;
         }
-        .list-group-item {
-            border: none;
-            background-color: #f8f9fa;
+        #npsGauge {
+            width: 100%;
+            height: auto;
+            max-width: 400px;
+            margin: 20px auto;
         }
-        .section-title {
-            color: #007bff;
-            font-weight: bold;
-            text-transform: uppercase;
+        #positiveWordCloud, #negativeWordCloud {
+            width: 100%;
+            max-height: 200px;
+            margin: 0 auto;
         }
-        .highlight {
-            font-weight: bold;
-            color: #28a745;
+        .star-rating {
+            font-size: 1.5rem;
+        }
+        .columns-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .column {
+            width: 48%;
+            text-align: center;
+        }
+
+        .content-container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* Responsividade para NPS e Star Ratings */
+        @media (max-width: 768px) {
+            .columns-container {
+                flex-direction: column;
+            }
+            .column {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            #npsGauge {
+                max-width: 300px; /* Ajuste do tamanho do NPS em dispositivos móveis */
+            }
+            #starRatings {
+                max-width: 300px; /* Ajuste do tamanho do star rating */
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container my-5">
-        <h1 class="text-center text-primary mb-4">Sentiment Analysis Dashboard</h1>
+    <div class="content-container">
+        <h1>Dashboard de Resultados de Pesquisa</h1>
+
+        <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; margin-top: 20px;">
+            <!-- Net Promoter Score (NPS) -->
+            <div style="text-align: center; width: 45%; min-width: 300px;">
+                <h2>Net Promoter Score (NPS)</h2>
+                <canvas id="npsGauge" style="max-width: 350px; max-height: 350px;"></canvas>
+            </div>
         
-        <!-- Upload Form -->
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header text-center">
-                        Upload a File for Analysis
+            <!-- Star Ratings -->
+            <div style="text-align: center; width: 45%; min-width: 300px;">
+                <h2>Avaliação Geral</h2>
+                <div id="starRatings" class="star-rating">
+                    <div style="font-size: 2rem; margin-bottom: 1px;">
+                        {{ "%.1f" | format(star_ratings) }} / 5
                     </div>
-                    <div class="card-body">
-                        <form action="/upload" method="POST" enctype="multipart/form-data" class="d-flex flex-column align-items-center">
-                            <input type="file" name="file" class="form-control mb-3" style="max-width: 400px;">
-                            <button type="submit" class="btn btn-primary">Upload and Analyze</button>
-                        </form>
-                    </div>
+                    <style>
+                        .stars-container {
+                            display: inline-block;
+                            font-size: 4rem; /* Aumenta o tamanho das estrelas */
+                            color: #ddd; /* Cor padrão para estrelas vazias */
+                            position: relative;
+                        }
+        
+                        .stars-container::before {
+                            content: '★★★★★'; /* Estrelas vazias */
+                            z-index: 1;
+                        }
+        
+                        .stars-container::after {
+                            content: '★★★★★'; /* Estrelas preenchidas */
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: calc({{ star_ratings }} / 5 * 100%); /* Proporção de estrelas preenchidas */
+                            color: #ffd700; /* Cor das estrelas preenchidas */
+                            overflow: hidden;
+                            z-index: 2;
+                        }
+                    </style>
+                    <div class="stars-container"></div>
                 </div>
             </div>
         </div>
-        
-        <!-- NPS Section -->
-        <div class="row mb-4">
-            <div class="col-md-6">
+
+        <!-- Colunas com as seções de palavras e comentários -->
+        <div class="columns-container">
+            <!-- Card para palavras positivas -->
+            <div class="column">
                 <div class="card">
-                    <div class="card-header text-center">
-                        Net Promoter Score
-                    </div>
-                    <div class="card-body text-center">
-                        <h2 class="highlight">{{ nps_score }}%</h2>
-                        <p>Total Reviews: {{ total_reviews }}</p>
-                        <p>Promoters: <span class="text-success">{{ promoters_count }}</span></p>
-                        <p>Detractors: <span class="text-danger">{{ detractors_count }}</span></p>
-                        <p>Neutral: {{ neutral_count }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header text-center">
-                        Star Ratings
-                    </div>
-                    <div class="card-body text-center">
-                        <h2 class="highlight">{{ star_ratings }} / 5</h2>
-                        <p>Average Rating Based on Reviews</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Common Words Section -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        Most Common Positive Words
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        {% for word_data in positive_common_words %}
-                        <li class="list-group-item">
-                            <span class="highlight">{{ word_data.word }}</span>: {{ word_data.count }}
-                        </li>
+                    <h2>Palavras Positivas Mais Comuns</h2>
+                    <img src="/static/positive_wordcloud.png" alt="Nuvem de Palavras Positivas" id="positiveWordCloud">
+                    
+                    <h2>Comentários Positivos</h2>
+                    <ul>
+                        {% for comment in most_relevant_comments['positive'] %}
+                            <li>{{ comment }}</li>
                         {% endfor %}
                     </ul>
                 </div>
             </div>
-            <div class="col-md-6">
+
+            <!-- Card para palavras negativas -->
+            <div class="column">
                 <div class="card">
-                    <div class="card-header">
-                        Most Common Negative Words
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        {% for word_data in negative_common_words %}
-                        <li class="list-group-item">
-                            <span class="text-danger">{{ word_data.word }}</span>: {{ word_data.count }}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Relevant Comments Section -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        Positive Comments
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        {% for comment in most_relevant_comments.positive %}
-                        <li class="list-group-item">{{ comment }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        Negative Comments
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        {% for comment in most_relevant_comments.negative %}
-                        <li class="list-group-item">{{ comment }}</li>
+                    <h2>Palavras Negativas Mais Comuns</h2>
+                    <img src="/static/negative_wordcloud.png" alt="Nuvem de Palavras Negativas" id="negativeWordCloud">
+                    
+                    <h2>Comentários Negativos</h2>
+                    <ul>
+                        {% for comment in most_relevant_comments['negative'] %}
+                            <li>{{ comment }}</li>
                         {% endfor %}
                     </ul>
                 </div>
             </div>
         </div>
+
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Net Promoter Score Gauge
+        const npsGaugeCtx = document.getElementById('npsGauge').getContext('2d');
+
+        const detractorsCount = {{ detractors_count }};
+        const neutralCount = {{ neutral_count }};
+        const promotersCount = {{ promoters_count }};
+        const totalResponses = detractorsCount + neutralCount + promotersCount;
+        const npsPercentage = ((promotersCount - detractorsCount) / totalResponses) * 100;
+
+        const npsGauge = new Chart(npsGaugeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Detratores', 'Neutros', 'Promotores'],
+                datasets: [{
+                    data: [detractorsCount, neutralCount, promotersCount],
+                    backgroundColor: ['#ff6384', '#ffcd56', '#36a2eb'],
+                }]
+            },
+            options: {
+                plugins: {
+                    datalabels: {
+                        display: false
+                    },
+                },
+                cutout: '75%',
+                animation: {
+                    animateScale: true
+                }
+            },
+            plugins: [{
+                id: 'nps-text',
+                beforeDraw: (chart) => {
+                    const { ctx, width, height } = chart;
+                    ctx.save();
+                    ctx.font = '50px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    const centerX = width / 2;
+                    const centerY = height / 1.9;
+                    ctx.fillText(`${npsPercentage.toFixed(0)}%`, centerX, centerY);
+                }
+            }]
+        });
+    </script>
 </body>
 </html>

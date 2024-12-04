@@ -2,10 +2,14 @@ import json
 import os
 import numpy as np
 import pandas as pd
+from wordcloud import WordCloud
+import matplotlib
+matplotlib.use('Agg')  # Usa o backend 'Agg', que não exige uma GUI
+import matplotlib.pyplot as plt
 
 DATA_FOLDER = "data"
 DEFAULT_DATASET = os.path.join(DATA_FOLDER, "tripadvisor_hotel_reviews.csv")
-STATIC_FOLDER = "static"
+STATIC_FOLDER = "app/static"
 RESULTS_FILE = os.path.join(STATIC_FOLDER, "results.json")
 ALLOWED_EXTENSIONS = {'csv'}
 UPLOAD_FOLDER = "uploads"
@@ -86,3 +90,28 @@ def save_file(uploaded_file):
     file_path = os.path.join(UPLOAD_FOLDER, uploaded_file.filename)
     uploaded_file.save(file_path)
     return file_path
+
+def generate_wordcloud(word_data, file_name):
+    word_freq = convert_to_wordcloud_format(word_data)
+    
+    # Condicional para escolher o colormap com base no nome do arquivo
+    if "positive" in file_name.lower():
+        colormap = 'Greens'  # Usar tons de verde para palavras positivas
+    else:
+        colormap = 'Reds'  # Usar tons de vermelho para palavras negativas
+
+    # Gerando a nuvem de palavras com a cor especificada
+    wordcloud = WordCloud(width=800, height=400, background_color='white', colormap=colormap).generate_from_frequencies(word_freq)
+    
+    output_file = os.path.join(STATIC_FOLDER, file_name)
+    
+    # Gera a nuvem de palavras e salva a imagem no arquivo
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')  # Remove o eixo
+    plt.savefig(output_file, format='png')  # Salva a imagem
+    plt.close()
+
+# Converte a lista de dicionários para o formato esperado
+def convert_to_wordcloud_format(data):
+    return {item["word"]: item["count"] for item in data}

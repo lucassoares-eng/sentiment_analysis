@@ -1,7 +1,11 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, send_from_directory
 from app.model import analyze
-from app.utils import delete_file, load_file, load_results, save_file
+from app.utils import delete_file, generate_wordcloud, load_results, save_file
 from app import app  # Imports the pre-initialized app from the main package
+
+@app.route('/static/<filename>')
+def serve_wordcloud(filename):
+    return send_from_directory('static', filename)
 
 @app.route("/")
 def home():
@@ -9,6 +13,8 @@ def home():
     Renders the home page with data from the results.json file.
     """
     results = load_results()
+    generate_wordcloud(results['positive_common_words'], 'positive_wordcloud.png')
+    generate_wordcloud(results['negative_common_words'], 'negative_wordcloud.png')
     if results:
         return render_template("index.html", **results)
     else:
@@ -41,6 +47,8 @@ def upload_and_analyze():
 
         # Renders the analysis page with the processed data
         if results:
+            generate_wordcloud(results['positive_common_words'], 'positive_wordcloud.png')
+            generate_wordcloud(results['negative_common_words'], 'negative_wordcloud.png')
             return render_template("index.html", **results)
 
     return redirect(url_for("home"))
