@@ -9,16 +9,41 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/wordcloud2.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            color: #34495e;
+            text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
         }
+        /* Títulos principais */
+        h1, h2 {
+            text-align: center;
+            font-weight: 500;
+        }
+
+        h1 {
+            margin-top: 20px;
+            font-size: 2.2rem;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+        }
+        /* Cartões */
         .card {
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+            background: #ffffff; /* Fundo branco limpo */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Sombras modernas */
+            border-radius: 12px; /* Bordas suaves */
             margin: 20px;
             padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efeitos ao passar o mouse */
+        }
+
+        .card:hover {
+            transform: scale(1.03); /* Leve aumento ao passar o mouse */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Sombra mais forte */
         }
         .card h2 {
             text-align: center;
@@ -56,6 +81,90 @@
             text-align: center;
         }
 
+        .stars-container {
+            display: inline-block;
+            font-size: 4rem; /* Tamanho das estrelas */
+            color: #ddd; /* Cor padrão (vazia) das estrelas */
+            position: relative;
+        }
+
+        .stars-container::before {
+            content: '★★★★★'; /* Estrelas vazias */
+            z-index: 1;
+        }
+
+        .stars-container::after {
+            content: '★★★★★'; /* Estrelas preenchidas */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%; /* Inicialmente sem preenchimento */
+            background: linear-gradient(90deg, #ffd700 0%, #ff9500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            overflow: hidden;
+            z-index: 2;
+
+            /* Animação de preenchimento */
+            animation: fill-stars 1s ease-in-out forwards;
+        }
+
+        /* Definindo a animação */
+        @keyframes fill-stars {
+            0% {
+                width: 0%;
+            }
+            100% {
+                width: calc({{ star_ratings }} / 5 * 100%);
+            }
+        }
+
+         /* Estilização dos comentários */
+        .comment-box {
+            background: #f9fbfd;
+            border: 1px solid #dfe4ea;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-style: italic;
+            font-size: 0.95rem; /* Tamanho da fonte ajustado */
+            color: #34495e; /* Texto em tom neutro */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transições suaves */
+        }
+
+        .comment-box:hover {
+            transform: scale(1.02); /* Leve destaque */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra mais evidente */
+        }
+
+        .comment-box::before {
+            content: '“'; /* Aspas decorativas de abertura */
+            font-size: 1.5rem;
+            color: #95a5a6;
+            margin-right: 5px;
+        }
+
+        .comment-box::after {
+            content: '”'; /* Aspas decorativas de fechamento */
+            font-size: 1.5rem;
+            color: #95a5a6;
+            margin-left: 5px;
+        }
+
+        /* Configuração de colunas */
+        .columns-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            gap: 20px;
+        }
+
+        .column {
+            width: 45%;
+            min-width: 300px;
+        }
+
         /* Responsiveness for NPS and Star Ratings */
         @media (max-width: 768px) {
             .columns-container {
@@ -82,15 +191,16 @@
             <!-- Net Promoter Score (NPS) -->
             <div style="text-align: center; width: 45%; min-width: 300px;">
                 <h2>Net Promoter Score (NPS)</h2>
-                <canvas id="npsGauge" style="max-width: 350px; max-height: 350px;"></canvas>
+                <canvas id="npsGauge" style="max-width: 300px; max-height: 350px;"></canvas>
             </div>
         
             <!-- Star Ratings -->
             <div style="text-align: center; width: 45%; min-width: 300px;">
                 <h2>Overall Rating</h2>
                 <div id="starRatings" class="star-rating">
-                    <div style="font-size: 2rem; margin-bottom: 1px;">
-                        {{ "%.1f" | format(star_ratings) }} / 5
+                    <!-- Exibição da nota -->
+                    <div id="rating-value" style="font-size: 2rem; margin-bottom: 1px;">
+                        0.0 / 5
                     </div>
                     <style>
                         .stars-container {
@@ -116,40 +226,40 @@
                             z-index: 2;
                         }
                     </style>
+                    <!-- Contêiner de estrelas -->
                     <div class="stars-container"></div>
                 </div>
             </div>
         </div>
 
+        <h1>Feedback Highlights</h1>
         <!-- Columns with words and comments sections -->
         <div class="columns-container">
             <!-- Card for positive words -->
             <div class="column">
+                <h2>Positives</h2>
                 <div class="card">
-                    <h2>Most Common Positive Words</h2>
                     <img src="/static/positive_wordcloud.png" alt="Positive Words Word Cloud" id="positiveWordCloud">
                     
-                    <h2>Positive Comments</h2>
-                    <ul>
-                        {% for comment in most_relevant_comments['positive'] %}
-                            <li>{{ comment }}</li>
-                        {% endfor %}
-                    </ul>
+                    {% for comment in most_relevant_comments['positive'] %}
+                    <div class="comment-box">
+                        {{ comment|capitalize }}
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
 
             <!-- Card for negative words -->
             <div class="column">
+                <h2>Negatives</h2>
                 <div class="card">
-                    <h2>Most Common Negative Words</h2>
                     <img src="/static/negative_wordcloud.png" alt="Negative Words Word Cloud" id="negativeWordCloud">
                     
-                    <h2>Negative Comments</h2>
-                    <ul>
-                        {% for comment in most_relevant_comments['negative'] %}
-                            <li>{{ comment }}</li>
-                        {% endfor %}
-                    </ul>
+                    {% for comment in most_relevant_comments['negative'] %}
+                        <div class="comment-box">
+                            {{ comment|capitalize }}
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -159,13 +269,62 @@
     <script>
         // Net Promoter Score Gauge
         const npsGaugeCtx = document.getElementById('npsGauge').getContext('2d');
-
+    
         const detractorsCount = {{ detractors_count }};
         const neutralCount = {{ neutral_count }};
         const promotersCount = {{ promoters_count }};
         const totalResponses = detractorsCount + neutralCount + promotersCount;
         const npsPercentage = ((promotersCount - detractorsCount) / totalResponses) * 100;
-
+    
+        // Pontuação real
+        const finalRating = {{ star_ratings }};
+    
+        // Configurações de animação
+        const duration = 1000; // Duração da animação (ms)
+        const steps = 60; // Número de incrementos
+        const interval = duration / steps; // Intervalo entre atualizações
+        const npsIncrement = npsPercentage / steps; // Incremento do NPS por etapa
+        const ratingIncrement = finalRating / steps; // Incremento da pontuação de estrelas por etapa
+    
+        let currentPercentage = 0; // Valor inicial para NPS
+        let currentRating = 0.0; // Valor inicial para pontuação de estrelas
+    
+        const ratingDisplay = document.getElementById('rating-value');
+        const starsContainer = document.querySelector('.stars-container');
+    
+        // Sincronização das animações
+        const animateValues = () => {
+            let stepCount = 0; // Contador de passos
+    
+            const intervalId = setInterval(() => {
+                stepCount++;
+    
+                // Atualizar o valor do NPS
+                currentPercentage += npsIncrement;
+                if (currentPercentage >= npsPercentage) {
+                    currentPercentage = npsPercentage; // Garante que não ultrapasse
+                }
+    
+                // Atualizar o valor da pontuação de estrelas
+                currentRating += ratingIncrement;
+                if (currentRating >= finalRating) {
+                    currentRating = finalRating; // Garante que não ultrapasse
+                }
+    
+                // Atualizar o gráfico do NPS
+                npsGauge.update('none'); // Atualiza sem animação para manter fluidez
+    
+                // Atualizar o valor exibido das estrelas
+                ratingDisplay.textContent = `${currentRating.toFixed(1)} / 5`;
+    
+                // Verificar se as animações terminaram
+                if (stepCount >= steps) {
+                    clearInterval(intervalId); // Finaliza a animação
+                }
+            }, interval);
+        };
+    
+        // Configuração do gráfico com plugin para o texto animado
         const npsGauge = new Chart(npsGaugeCtx, {
             type: 'doughnut',
             data: {
@@ -183,23 +342,45 @@
                 },
                 cutout: '75%',
                 animation: {
-                    animateScale: true
+                    animateScale: true,
+                    onComplete: () => animateValues() // Inicia as animações simultâneas após o gráfico carregar
                 }
             },
             plugins: [{
                 id: 'nps-text',
                 beforeDraw: (chart) => {
                     const { ctx, width, height } = chart;
+    
                     ctx.save();
-                    ctx.font = '50px Arial';
+    
+                    // Configuração do estilo do texto
+                    ctx.font = '40px Poppins, sans-serif';
+                    ctx.fillStyle = '#34495e'; // Cor do texto
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    const centerX = width / 2;
-                    const centerY = height / 1.9;
-                    ctx.fillText(`${npsPercentage.toFixed(0)}%`, centerX, centerY);
+    
+                    // Calculando a posição do texto
+                    const centerX = width / 1.9;
+                    const centerY = height / 1.7;
+    
+                    // Adicionando sombra ao texto
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 2;
+                    ctx.shadowBlur = 3;
+    
+                    // Escrevendo o texto animado no canvas
+                    ctx.fillText(`${Math.round(currentPercentage)}%`, centerX, centerY);
+    
+                    ctx.restore();
                 }
             }]
         });
-    </script>
+    
+        // Iniciar animação imediatamente após o carregamento da página
+        window.onload = () => {
+            animateValues(); // Dispara a animação dos números e gráfico ao mesmo tempo
+        };
+    </script>            
 </body>
 </html>
