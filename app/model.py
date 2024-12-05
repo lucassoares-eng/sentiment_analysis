@@ -248,7 +248,7 @@ def analyze(dataset_path=DEFAULT_DATASET):
         original_language = detect_original_language(reviews)
 
         # Using Pool for parallel processing
-        print('Analyzing reviews...')
+        print('Examining Reviews...')
         with Pool() as pool:
             # Passing the shared lists to the pool
             pool.starmap(process_review, [(review, original_language, sentiment_list, score_list, star_list, positive_list, negative_list) for review in reviews])

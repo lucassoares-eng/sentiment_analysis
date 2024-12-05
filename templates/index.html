@@ -15,35 +15,35 @@
         body {
             font-family: 'Poppins', sans-serif;
             color: #34495e;
-            text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+            text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1); /* Highlight shadow */
         }
-        /* Títulos principais */
+        /* Main Titles */
         h1, h2 {
             text-align: center;
             font-weight: 500;
         }
-
+    
         h1 {
             margin-top: 20px;
             font-size: 2.2rem;
         }
-
+    
         h2 {
             font-size: 1.6rem;
         }
-        /* Cartões */
+        /* Cards */
         .card {
-            background: #ffffff; /* Fundo branco limpo */
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Sombras modernas */
-            border-radius: 12px; /* Bordas suaves */
+            background: #ffffff; /* Clean white background */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Modern shadows */
+            border-radius: 12px; /* Smooth corners */
             margin: 20px;
             padding: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efeitos ao passar o mouse */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover effects */
         }
-
+    
         .card:hover {
-            transform: scale(1.03); /* Leve aumento ao passar o mouse */
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Sombra mais forte */
+            transform: scale(1.03); /* Slight zoom on hover */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow */
         }
         .card h2 {
             text-align: center;
@@ -57,9 +57,9 @@
         }
         #positiveWordCloud, #negativeWordCloud {
             width: 100%;
-            height: auto; /* Ajusta automaticamente a altura para manter a proporção */
-            border-radius: 6px; /* Suaviza os cantos da imagem */
-            object-fit: cover; /* Garante que a proporção seja mantida e o espaço preenchido */
+            height: auto; /* Auto-adjust height to maintain aspect ratio */
+            border-radius: 6px; /* Smooth image corners */
+            object-fit: cover; /* Ensures proportion and fills space */
             max-height: 200px;
             margin: 0 auto;
         }
@@ -72,47 +72,48 @@
             flex-wrap: wrap;
             margin-top: 20px;
         }
-
+    
         .column {
             width: 48%;
             text-align: center;
         }
-
+    
         .content-container {
             width: 80%;
             margin: 0 auto;
             text-align: center;
         }
-
+    
         .stars-container {
             display: inline-block;
-            font-size: 4rem; /* Tamanho das estrelas */
-            color: #ddd; /* Cor padrão (vazia) das estrelas */
+            font-size: 4rem; /* Star size */
+            color: #ddd; /* Default (empty) star color */
             position: relative;
+            transition: width 0.5s ease;
         }
-
+    
         .stars-container::before {
-            content: '★★★★★'; /* Estrelas vazias */
+            content: '★★★★★'; /* Empty stars */
             z-index: 1;
         }
-
+    
         .stars-container::after {
-            content: '★★★★★'; /* Estrelas preenchidas */
+            content: '★★★★★'; /* Filled stars */
             position: absolute;
             top: 0;
             left: 0;
-            width: 0%; /* Inicialmente sem preenchimento */
+            width: 0%; /* Initially no fill */
             background: linear-gradient(90deg, #ffd700 0%, #ff9500 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             overflow: hidden;
             z-index: 2;
-
-            /* Animação de preenchimento */
+    
+            /* Fill animation */
             animation: fill-stars 1s ease-in-out forwards;
         }
-
-        /* Definindo a animação */
+    
+        /* Define animation */
         @keyframes fill-stars {
             0% {
                 width: 0%;
@@ -121,8 +122,8 @@
                 width: calc({{ star_ratings }} / 5 * 100%);
             }
         }
-
-         /* Estilização dos comentários */
+    
+        /* Comment box styling */
         .comment-box {
             background: #f9fbfd;
             border: 1px solid #dfe4ea;
@@ -131,52 +132,100 @@
             padding: 15px;
             margin-bottom: 15px;
             font-style: italic;
-            font-size: 0.95rem; /* Tamanho da fonte ajustado */
-            color: #34495e; /* Texto em tom neutro */
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transições suaves */
+            font-size: 0.95rem; /* Adjusted font size */
+            color: #34495e; /* Neutral text tone */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
         }
-
-        /* Ajuste para a imagem dentro do comentário */
+    
+        /* Image inside comment box */
         .comment-box img {
             display: block;
-            max-width: 100%; /* Limita a largura da imagem ao contêiner */
-            height: auto; /* Ajusta automaticamente a altura para manter a proporção */
-            border-radius: 6px; /* Suaviza os cantos da imagem */
-            object-fit: cover; /* Garante que a proporção seja mantida e o espaço preenchido */
+            max-width: 100%; /* Limits image width to container */
+            height: auto; /* Auto-adjusts height to maintain aspect ratio */
+            border-radius: 6px; /* Smooth image corners */
+            object-fit: cover; /* Ensures proportion and fills space */
         }
-
+    
         .comment-box:hover {
-            transform: scale(1.02); /* Leve destaque */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra mais evidente */
+            transform: scale(1.02); /* Slight highlight */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* More noticeable shadow */
         }
-
+    
         .comment-box::before {
-            content: '“'; /* Aspas decorativas de abertura */
+            content: '“'; /* Decorative opening quote */
             font-size: 1.5rem;
             color: #95a5a6;
             margin-right: 5px;
         }
-
+    
         .comment-box::after {
-            content: '”'; /* Aspas decorativas de fechamento */
+            content: '”'; /* Decorative closing quote */
             font-size: 1.5rem;
             color: #95a5a6;
             margin-left: 5px;
         }
-
-        /* Configuração de colunas */
+    
+        /* Column settings */
         .columns-container {
             display: flex;
             justify-content: space-around;
             margin-top: 20px;
             gap: 20px;
         }
-
+    
         .column {
             width: 45%;
             min-width: 300px;
         }
-
+    
+        /* General loading overlay style */
+        #loading {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            z-index: 9999;
+            justify-content: center; /* Horizontally centered */
+            align-items: center; /* Vertically centered */
+        }
+    
+        /* Container for centering animation and text */
+        #loading-content {
+            position: relative;
+            display: inline-block;
+            text-align: center; /* Center content */
+        }
+    
+        /* Spinner style (rotating circle) */
+        #spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3); /* Light border */
+            border-top: 5px solid white; /* Rotating part */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto; /* Center inside container */
+        }
+    
+        /* Rotating animation */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    
+        /* Text style */
+        #loading-text {
+            margin-top: 15px; /* Space between spinner and text */
+        }
+    
         /* Responsiveness for NPS and Star Ratings */
         @media (max-width: 768px) {
             .columns-container {
@@ -193,20 +242,27 @@
                 max-width: 300px; /* Adjust star rating size */
             }
             .comment-box img {
-                width: 100%; /* Ajusta a largura ao contêiner */
-                height: auto; /* Mantém a proporção da altura */
-                max-height: 200px; /* Limita a altura máxima em dispositivos menores */
-                object-fit: cover; /* Garante que a proporção seja preservada */
-                border-radius: 6px; /* Aplica bordas arredondadas */
+                width: 100%; /* Adjust width to container */
+                height: auto; /* Maintain height proportion */
+                max-height: 200px; /* Limit max height on smaller devices */
+                object-fit: cover; /* Ensure proportion is preserved */
+                border-radius: 6px; /* Apply rounded corners */
             }
         }
-    </style>
+    </style>    
 </head>
 <body>
     <div class="content-container">
         <h1>Survey Results Dashboard</h1>
 
-        <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; margin-top: 20px;">
+        <div id="loading">
+            <div id="loading-content">
+                <div id="spinner"></div>
+                <div id="loading-text">Examining Reviews...</div>
+            </div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-around; align-items: top; flex-wrap: wrap; margin-top: 20px;">
             <!-- Net Promoter Score (NPS) -->
             <div style="text-align: center; width: 45%; min-width: 300px;">
                 <h2>Net Promoter Score (NPS)</h2>
@@ -217,7 +273,7 @@
             <div style="text-align: center; width: 45%; min-width: 300px;">
                 <h2>Overall Rating</h2>
                 <div id="starRatings" class="star-rating">
-                    <!-- Exibição da nota -->
+                    <!-- Display of rating -->
                     <div id="rating-value" style="font-size: 2rem; margin-bottom: 1px;">
                         0.0 / 5
                     </div>
@@ -245,12 +301,12 @@
                             z-index: 2;
                         }
                     </style>
-                    <!-- Contêiner de estrelas -->
+                    <!-- Star container -->
                     <div class="stars-container"></div>
                 </div>
             </div>
         </div>
-
+        
         <h1>Feedback Highlights</h1>
         <!-- Columns with words and comments sections -->
         <div class="columns-container">
@@ -267,7 +323,7 @@
                     {% endfor %}
                 </div>
             </div>
-
+        
             <!-- Card for negative words -->
             <div class="column">
                 <h2>Negatives</h2>
@@ -282,7 +338,7 @@
                 </div>
             </div>
         </div>
-
+        
         <!-- Upload Form -->
         <div class="row mb-4">
             <div class="col-md-12">
@@ -291,15 +347,19 @@
                         Try it with your own data
                     </div>
                     <div class="card-body">
-                        <form action="/upload" method="POST" enctype="multipart/form-data" class="d-flex flex-column align-items-center">
-                            <input type="file" name="file" class="form-control mb-3" style="max-width: 400px;">
-                            <button type="submit" class="btn btn-primary">Upload and Analyze</button>
+                        <form action="/upload" method="POST" enctype="multipart/form-data" class="d-flex flex-column align-items-center" id="uploadForm">
+                            <input 
+                                type="file" 
+                                name="file" 
+                                class="form-control mb-3" 
+                                style="max-width: 400px;" 
+                                onchange="submitForm()"
+                            >
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
     <script>
@@ -312,64 +372,61 @@
         const totalResponses = detractorsCount + neutralCount + promotersCount;
         const npsPercentage = ((promotersCount - detractorsCount) / totalResponses) * 100;
     
-        // Pontuação real
+        // Actual score
         const finalRating = {{ star_ratings }};
     
-        // Configurações de animação
-        const duration = 1000; // Duração da animação (ms)
-        const steps = 60; // Número de incrementos
-        const interval = duration / steps; // Intervalo entre atualizações
-        const npsIncrement = Math.abs(npsPercentage) / steps; // Incremento do NPS por etapa
-        const ratingIncrement = finalRating / steps; // Incremento da pontuação de estrelas por etapa
+        // Animation settings
+        const duration = 1000; // Animation duration (ms)
+        const steps = 60; // Number of increments
+        const interval = duration / steps; // Interval between updates
+        const npsIncrement = Math.abs(npsPercentage) / steps; // NPS increment per step
+        const ratingIncrement = finalRating / steps; // Star rating increment per step
     
-        let currentPercentage = 0; // Valor inicial para NPS
-        let currentRating = 0.0; // Valor inicial para pontuação de estrelas
+        let currentPercentage = 0; // Initial value for NPS
+        let currentRating = 0.0; // Initial value for star rating
     
         const ratingDisplay = document.getElementById('rating-value');
         const starsContainer = document.querySelector('.stars-container');
     
-        // Sincronização das animações
+        // Synchronization of animations
         const animateValues = () => {
-            let stepCount = 0; // Contador de passos
+            let stepCount = 0; // Step counter
     
             const intervalId = setInterval(() => {
                 stepCount++;
     
-                // Atualizar o valor do NPS (incrementando ou decrementando)
+                // Update NPS value (incrementing or decrementing)
                 if (npsPercentage >= 0) {
-                    // Caso positivo, incrementa
+                    // If positive, increment
                     currentPercentage += npsIncrement;
                     if (currentPercentage >= npsPercentage) {
-                        currentPercentage = npsPercentage; // Garante que não ultrapasse
+                        currentPercentage = npsPercentage; // Ensure it doesn't exceed
                     }
                 } else {
-                    // Caso negativo, decrementa
+                    // If negative, decrement
                     currentPercentage -= npsIncrement;
                     if (currentPercentage <= npsPercentage) {
-                        currentPercentage = npsPercentage; // Garante que não ultrapasse
+                        currentPercentage = npsPercentage; // Ensure it doesn't exceed
                     }
                 }
     
-                // Atualizar o valor da pontuação de estrelas
+                // Update star rating value
                 currentRating += ratingIncrement;
                 if (currentRating >= finalRating) {
-                    currentRating = finalRating; // Garante que não ultrapasse
+                    currentRating = finalRating; // Ensure it doesn't exceed
                 }
     
-                // Atualizar o gráfico do NPS
-                npsGauge.update('none'); // Atualiza sem animação para manter fluidez
-    
-                // Atualizar o valor exibido das estrelas
+                // Update displayed star rating value
                 ratingDisplay.textContent = `${currentRating.toFixed(1)} / 5`;
     
-                // Verificar se as animações terminaram
+                // Check if animations are complete
                 if (stepCount >= steps) {
-                    clearInterval(intervalId); // Finaliza a animação
+                    clearInterval(intervalId); // End animation
                 }
             }, interval);
         };
     
-        // Configuração do gráfico com plugin para o texto animado
+        // Setting up the chart with plugin for animated text
         const npsGauge = new Chart(npsGaugeCtx, {
             type: 'doughnut',
             data: {
@@ -388,7 +445,7 @@
                 cutout: '75%',
                 animation: {
                     animateScale: true,
-                    onComplete: () => animateValues() // Inicia as animações simultâneas após o gráfico carregar
+                    onComplete: () => animateValues() // Start animations simultaneously after chart loads
                 }
             },
             plugins: [{
@@ -398,23 +455,23 @@
     
                     ctx.save();
     
-                    // Configuração do estilo do texto
+                    // Text style settings
                     ctx.font = '40px Poppins, sans-serif';
-                    ctx.fillStyle = '#34495e'; // Cor do texto
+                    ctx.fillStyle = '#34495e'; // Text color
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
     
-                    // Calculando a posição do texto
+                    // Calculating text position
                     const centerX = width / 1.9;
                     const centerY = height / 1.7;
     
-                    // Adicionando sombra ao texto
+                    // Adding shadow to the text
                     ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
                     ctx.shadowOffsetX = 1;
                     ctx.shadowOffsetY = 2;
                     ctx.shadowBlur = 3;
     
-                    // Escrevendo o texto animado no canvas
+                    // Writing the animated text on the canvas
                     ctx.fillText(`${Math.round(currentPercentage)}%`, centerX, centerY);
     
                     ctx.restore();
@@ -422,10 +479,18 @@
             }]
         });
     
-        // Iniciar animação imediatamente após o carregamento da página
+        // Start animation immediately after page load
         window.onload = () => {
-            animateValues(); // Dispara a animação dos números e gráfico ao mesmo tempo
+            animateValues(); // Trigger animation for numbers and chart at the same time
         };
+
+        // Automatically submit the form when a file is selected
+        function submitForm() {
+            // Display the animation
+            document.getElementById('loading').style.display = 'flex';
+            // Submit the form
+            document.getElementById('uploadForm').submit();
+        }
     </script>            
 </body>
 </html>
