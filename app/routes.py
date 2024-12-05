@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, send_from_directory
 from app.model import analyze
-from app.utils import delete_file, generate_wordcloud, load_results, save_file
+from app.utils import convert_to_serializable, delete_file, generate_wordcloud, load_results, save_file
 from app import app  # Imports the pre-initialized app from the main package
 
 @app.route('/static/<filename>')
@@ -47,6 +47,7 @@ def upload_and_analyze():
 
         # Renders the analysis page with the processed data
         if results:
+            results = convert_to_serializable(results)
             generate_wordcloud(results['positive_common_words'], 'positive_wordcloud.png')
             generate_wordcloud(results['negative_common_words'], 'negative_wordcloud.png')
             return render_template("index.html", **results)

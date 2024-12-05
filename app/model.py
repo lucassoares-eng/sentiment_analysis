@@ -79,12 +79,12 @@ def analyze_sentiment(review, original_language):
             # Classify the sentence
             if compound_score >= 0.05:  # Positive sentiment
                 positive_parts.append({
-                    "original": sentence,
+                    "original": sentence.lstrip('"'),
                     "score": compound_score
                 })
             elif compound_score <= -0.05:  # Negative sentiment
                 negative_parts.append({
-                    "original": sentence,
+                    "original": sentence.lstrip('"'),
                     "score": compound_score
                 })
         except Exception as e:

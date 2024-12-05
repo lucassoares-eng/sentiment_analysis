@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 DATA_FOLDER = "data"
 DEFAULT_DATASET = os.path.join(DATA_FOLDER, "tripadvisor_hotel_reviews.csv")
 STATIC_FOLDER = "app/static"
-RESULTS_FILE = os.path.join(STATIC_FOLDER, "results.json")
 ALLOWED_EXTENSIONS = {'csv'}
 UPLOAD_FOLDER = "uploads"
 
@@ -32,7 +31,7 @@ def convert_to_serializable(obj):
         return {key: convert_to_serializable(value) for key, value in obj.items()}
     return obj
 
-def save_results(results):
+def save_results(results, file_name="results.json"):
     """
     Save the analysis results as a JSON file in the static folder.
     
@@ -46,13 +45,15 @@ def save_results(results):
     serializable_results = convert_to_serializable(results)
 
     # Save the results to a JSON file
+    RESULTS_FILE = os.path.join(STATIC_FOLDER, file_name)
     with open(RESULTS_FILE, "w", encoding="utf-8") as f:
         json.dump(serializable_results, f, indent=4, ensure_ascii=False)
 
-def load_results():
+def load_results(file_name="results.json"):
     """
     Load results from the JSON file in the static folder.
     """
+    RESULTS_FILE = os.path.join(STATIC_FOLDER, file_name)
     if os.path.exists(RESULTS_FILE):
         with open(RESULTS_FILE, "r", encoding="utf-8") as f:
             return json.load(f)

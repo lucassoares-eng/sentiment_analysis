@@ -57,6 +57,9 @@
         }
         #positiveWordCloud, #negativeWordCloud {
             width: 100%;
+            height: auto; /* Ajusta automaticamente a altura para manter a proporção */
+            border-radius: 6px; /* Suaviza os cantos da imagem */
+            object-fit: cover; /* Garante que a proporção seja mantida e o espaço preenchido */
             max-height: 200px;
             margin: 0 auto;
         }
@@ -133,6 +136,15 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transições suaves */
         }
 
+        /* Ajuste para a imagem dentro do comentário */
+        .comment-box img {
+            display: block;
+            max-width: 100%; /* Limita a largura da imagem ao contêiner */
+            height: auto; /* Ajusta automaticamente a altura para manter a proporção */
+            border-radius: 6px; /* Suaviza os cantos da imagem */
+            object-fit: cover; /* Garante que a proporção seja mantida e o espaço preenchido */
+        }
+
         .comment-box:hover {
             transform: scale(1.02); /* Leve destaque */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra mais evidente */
@@ -179,6 +191,13 @@
             }
             #starRatings {
                 max-width: 300px; /* Adjust star rating size */
+            }
+            .comment-box img {
+                width: 100%; /* Ajusta a largura ao contêiner */
+                height: auto; /* Mantém a proporção da altura */
+                max-height: 200px; /* Limita a altura máxima em dispositivos menores */
+                object-fit: cover; /* Garante que a proporção seja preservada */
+                border-radius: 6px; /* Aplica bordas arredondadas */
             }
         }
     </style>
@@ -264,6 +283,23 @@
             </div>
         </div>
 
+        <!-- Upload Form -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header text-center">
+                        Try it with your own data
+                    </div>
+                    <div class="card-body">
+                        <form action="/upload" method="POST" enctype="multipart/form-data" class="d-flex flex-column align-items-center">
+                            <input type="file" name="file" class="form-control mb-3" style="max-width: 400px;">
+                            <button type="submit" class="btn btn-primary">Upload and Analyze</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -283,7 +319,7 @@
         const duration = 1000; // Duração da animação (ms)
         const steps = 60; // Número de incrementos
         const interval = duration / steps; // Intervalo entre atualizações
-        const npsIncrement = npsPercentage / steps; // Incremento do NPS por etapa
+        const npsIncrement = Math.abs(npsPercentage) / steps; // Incremento do NPS por etapa
         const ratingIncrement = finalRating / steps; // Incremento da pontuação de estrelas por etapa
     
         let currentPercentage = 0; // Valor inicial para NPS
@@ -299,10 +335,19 @@
             const intervalId = setInterval(() => {
                 stepCount++;
     
-                // Atualizar o valor do NPS
-                currentPercentage += npsIncrement;
-                if (currentPercentage >= npsPercentage) {
-                    currentPercentage = npsPercentage; // Garante que não ultrapasse
+                // Atualizar o valor do NPS (incrementando ou decrementando)
+                if (npsPercentage >= 0) {
+                    // Caso positivo, incrementa
+                    currentPercentage += npsIncrement;
+                    if (currentPercentage >= npsPercentage) {
+                        currentPercentage = npsPercentage; // Garante que não ultrapasse
+                    }
+                } else {
+                    // Caso negativo, decrementa
+                    currentPercentage -= npsIncrement;
+                    if (currentPercentage <= npsPercentage) {
+                        currentPercentage = npsPercentage; // Garante que não ultrapasse
+                    }
                 }
     
                 // Atualizar o valor da pontuação de estrelas
