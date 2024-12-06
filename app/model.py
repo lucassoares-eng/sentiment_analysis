@@ -135,8 +135,8 @@ def analyze(dataset_path=DEFAULT_DATASET):
             ratings[topic] = 1  # If there are no parts for the topic, assign a score of 1
         else:
             average_score = total_score / count
-            # Convert the average score to a scale of 1 to 10
-            rating = ((average_score + 1) / 2) * 9 + 1  # Scale from [-1, 1] to [1, 10]
+            # Convert the average score to a scale of 1 to 5
+            rating = ((average_score + 1) / 2) * 4 + 1  # Scale from [-1, 1] to [1, 5]
             ratings[topic] = round(rating, 2)  # Round to 2 decimal places
 
     # Prepare results to be returned

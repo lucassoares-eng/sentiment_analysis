@@ -90,6 +90,7 @@
             color: #ddd; /* Default (empty) star color */
             position: relative;
             transition: width 0.5s ease;
+            margin-top: -30px;
         }
     
         .stars-container::before {
@@ -210,6 +211,13 @@
             animation: spin 1s linear infinite;
             margin: 0 auto; /* Center inside container */
         }
+
+        /* Defina o estilo para o container do gráfico para garantir que ele tenha o tamanho adequado */
+        .chart-container {
+            text-align: center;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
     
         /* Rotating animation */
         @keyframes spin {
@@ -262,50 +270,31 @@
             </div>
         </div>
         
-        <div style="display: flex; justify-content: space-around; align-items: top; flex-wrap: wrap; margin-top: 20px;">
+        <div style="display: flex; justify-content: space-around; align-items: start; flex-wrap: wrap; margin-top: 20px;">
             <!-- Net Promoter Score (NPS) -->
             <div style="text-align: center; width: 45%; min-width: 300px;">
                 <h2>Net Promoter Score (NPS)</h2>
-                <canvas id="npsGauge" style="max-width: 300px; max-height: 350px;"></canvas>
+                <canvas id="npsGauge" style="max-width: 320px; max-height: 350px;"></canvas>
             </div>
         
             <!-- Star Ratings -->
             <div style="text-align: center; width: 45%; min-width: 300px;">
                 <h2>Overall Rating</h2>
-                <div id="starRatings" class="star-rating">
-                    <!-- Display of rating -->
-                    <div id="rating-value" style="font-size: 2rem; margin-bottom: 1px;">
-                        0.0 / 5
-                    </div>
-                    <style>
-                        .stars-container {
-                            display: inline-block;
-                            font-size: 4rem; /* Increase star size */
-                            color: #ddd; /* Default color for empty stars */
-                            position: relative;
-                        }
-        
-                        .stars-container::before {
-                            content: '★★★★★'; /* Empty stars */
-                            z-index: 1;
-                        }
-        
-                        .stars-container::after {
-                            content: '★★★★★'; /* Filled stars */
-                            position: absolute;
-                            top: 0;
-                            left: 0;
-                            width: calc({{ star_ratings }} / 5 * 100%); /* Proportion of filled stars */
-                            color: #ffd700; /* Color for filled stars */
-                            overflow: hidden;
-                            z-index: 2;
-                        }
-                    </style>
-                    <!-- Star container -->
-                    <div class="stars-container"></div>
+                <!-- Radar Chart -->
+                <div class="chart-container">
+                    <canvas id="radarChart" width="300" height="300"></canvas>
                 </div>
             </div>
         </div>
+        
+        <!-- Display of rating -->
+        <div id="rating-value-container" style="text-align: center; margin: 20px auto;">
+            <div id="rating-value" style="font-size: 30px;">
+                0.0 / 5
+            </div>
+            <!-- Star container -->
+            <div class="stars-container"></div>
+        </div>        
         
         <h1>Feedback Highlights</h1>
         <!-- Columns with words and comments sections -->
@@ -483,6 +472,66 @@
         window.onload = () => {
             animateValues(); // Trigger animation for numbers and chart at the same time
         };
+
+        // Evaluation data for the radar chart
+        const radar_data = {{ topics_rating | tojson }};
+        const labels = Object.keys(radar_data).map(label => {
+            return label.charAt(0).toUpperCase() + label.slice(1); // Capitalize the first letter
+        });
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'Ratings',
+                data: Object.values(radar_data), // Rating values
+                backgroundColor: 'rgba(34, 193, 195, 0.2)', // Background color of the chart
+                borderColor: 'rgba(34, 193, 195, 1)', // Border color of the chart
+                borderWidth: 1
+            }]
+        };
+
+        // Chart configuration
+        const config = {
+            type: 'radar',
+            data: data,
+            options: {
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        angleLines: {
+                            display: true
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 5,
+                        ticks: {
+                            display: false,
+                            backdropColor: 'rgba(0, 0, 0, 0)', // Transparent background for ticks
+                            max: 5, // Ensure the maximum value is 10
+                            stepSize: 1, // Set step size for ticks
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 12, // Set font size to 18px for better balance
+                                family: "'Poppins', sans-serif", // Poppins font family
+                                weight: 'normal'
+                            },
+                        }
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false, // Hide the legend
+                    }
+                }
+            }
+        };
+
+        // Rendering the chart
+        const radarChart = new Chart(
+            document.getElementById('radarChart'),
+            config
+        );
 
         // Automatically submit the form when a file is selected
         function submitForm() {
