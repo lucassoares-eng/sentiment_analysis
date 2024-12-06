@@ -6,7 +6,6 @@ if __name__ == "__main__":
     results = load_results()
     # Run the analysis on the default dataset when the app starts
     if not results:
-        print("Running analysis on the default dataset...")
         results = analyze()
         save_results(results)
         print("Default analysis completed")

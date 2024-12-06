@@ -100,5 +100,12 @@
             "highly disappointing 1 hotel bad service mean bad rude desk ignoring waiters slow moving bellhops nameit,"
         ]
     },
-    "star_ratings": 4.61
+    "star_ratings": 4.61,
+    "topics_rating": {
+        "service": 7.64,
+        "price": 7.37,
+        "experience": 7.02,
+        "delivery": 6.77,
+        "quality": 6.39
+    }
 }
