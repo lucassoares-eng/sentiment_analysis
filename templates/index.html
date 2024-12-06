@@ -90,7 +90,7 @@
             color: #ddd; /* Default (empty) star color */
             position: relative;
             transition: width 0.5s ease;
-            margin-top: -30px;
+            margin-top: -25px;
         }
     
         .stars-container::before {
@@ -215,8 +215,10 @@
         /* Defina o estilo para o container do gráfico para garantir que ele tenha o tamanho adequado */
         .chart-container {
             text-align: center;
-            margin: 0 auto;
-            padding-top: 20px;
+            margin-left: 60px;
+            width: 370px;
+            height: 370px;
+            margin-top: -30px;
         }
     
         /* Rotating animation */
@@ -256,6 +258,10 @@
                 object-fit: cover; /* Ensure proportion is preserved */
                 border-radius: 6px; /* Apply rounded corners */
             }
+            .chart-container {
+                margin-top: -60px;
+                margin-left: -30px;
+            }
         }
     </style>    
 </head>
@@ -269,32 +275,32 @@
                 <div id="loading-text">Examining Reviews...</div>
             </div>
         </div>
-        
-        <div style="display: flex; justify-content: space-around; align-items: start; flex-wrap: wrap; margin-top: 20px;">
-            <!-- Net Promoter Score (NPS) -->
-            <div style="text-align: center; width: 45%; min-width: 300px;">
-                <h2>Net Promoter Score (NPS)</h2>
-                <canvas id="npsGauge" style="max-width: 320px; max-height: 350px;"></canvas>
-            </div>
-        
-            <!-- Star Ratings -->
-            <div style="text-align: center; width: 45%; min-width: 300px;">
-                <h2>Overall Rating</h2>
-                <!-- Radar Chart -->
-                <div class="chart-container">
-                    <canvas id="radarChart" width="300" height="300"></canvas>
-                </div>
-            </div>
-        </div>
-        
+
         <!-- Display of rating -->
         <div id="rating-value-container" style="text-align: center; margin: 20px auto;">
-            <div id="rating-value" style="font-size: 30px;">
+            <div id="rating-value" style="font-size: 30px; margin-top: 0px">
                 0.0 / 5
             </div>
             <!-- Star container -->
             <div class="stars-container"></div>
-        </div>        
+        </div>  
+        
+        <div style="display: flex; justify-content: space-around; align-items: start; flex-wrap: wrap; margin-top: -40px;">
+            <!-- Net Promoter Score (NPS) -->
+            <div style="text-align: center; width: 45%; min-width: 300px;">
+                <h2>Net Promoter Score (NPS)</h2>
+                <canvas id="npsGauge" style="max-width: 300px; max-height: 350px;"></canvas>
+            </div>
+        
+            <!-- Star Ratings -->
+            <div style="text-align: center; width: 45%; min-width: 300px;">
+                <h2>Rating by Category</h2>
+                <!-- Radar Chart -->
+                <div class="chart-container">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+        </div>      
         
         <h1>Feedback Highlights</h1>
         <!-- Columns with words and comments sections -->
