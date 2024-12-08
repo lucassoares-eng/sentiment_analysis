@@ -1,6 +1,5 @@
 import os
 from multiprocessing import Pool, Manager
-from collections import defaultdict
 from app.analyze import analyze_sentiment, calculate_star_rating, detect_original_language, generate_common_words
 from app.utils import load_file
 
@@ -32,7 +31,7 @@ def process_review(review, original_language, sentiment_list, score_list, star_l
 
 def analyze(dataset_path=DEFAULT_DATASET):
     """
-    Analyzes the sentiment of hotel reviews, calculates the NPS score, and returns
+    Analyzes the sentiment of reviews, calculates the NPS score, and returns
     detailed results, including the most common words, sentiment distribution,
     number of reviews, detractors, promoters, and the most relevant comments.
     
@@ -157,3 +156,15 @@ def analyze(dataset_path=DEFAULT_DATASET):
     }
 
     return results
+
+def analyze_review(review):
+    original_language = detect_original_language([review])
+    analyze_result = analyze_sentiment(review, original_language)
+    sentiment_score = analyze_result['scores']
+    sentiment = analyze_result['sentiment']
+    star_rating = calculate_star_rating(sentiment_score) 
+    result = {
+        "sentment": sentiment,
+        "star_ratings": star_rating,
+    }
+    return result

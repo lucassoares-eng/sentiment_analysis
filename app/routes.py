@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, send_from_directory
-from app.model import analyze
+from app.model import analyze, analyze_review
 from app.utils import convert_to_serializable, delete_file, generate_wordcloud, load_results, save_file
 from app import app  # Imports the pre-initialized app from the main package
 
@@ -19,6 +19,23 @@ def home():
         return render_template("index.html", **results)
     else:
         return "Results file not found!", 404
+    
+@app.route("/analyze-text", methods=["POST"])
+def analyze_text():
+    """
+    Route to analyze a single text review and return the sentiment and star ratings.
+    """
+    data = request.json
+    review = data.get("review", "")
+
+    if not review:
+        return {"error": "Review text is required!"}, 400
+
+    try:
+        result = analyze_review(review)  # Chamada à função no model.py
+        return result  # Retorna os dados como JSON
+    except Exception as e:
+        return {"error": str(e)}, 500
 
 @app.route("/upload", methods=["POST"])
 def upload_and_analyze():
