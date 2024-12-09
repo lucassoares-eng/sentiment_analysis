@@ -337,6 +337,68 @@
             margin-top: 20px;
             color: white;
         }
+
+        .loading-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 3px solid #ddd;
+            border-top-color: #3498db;
+            animation: spin 1s linear infinite;
+            display: none; /* Oculto inicialmente */
+            position: absolute; /* Posicionamento absoluto em relação ao botão */
+            top: 50%; /* Centraliza verticalmente */
+            left: 50%; /* Centraliza horizontalmente */
+            transform: translate(-50%, -50%); /* Ajusta o centro exato */
+            z-index: 1; /* Garante que fique acima do botão */
+        }
+
+        /* Animação de rotação */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .textarea-container {
+            position: relative;
+            width: 87%;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            font-family: Arial, sans-serif;
+            resize: none; /* Disable resizing for consistent layout */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        }
+
+        textarea::placeholder {
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .char-counter {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            font-size: 0.8rem;
+            color: #555;
+        }
     
         /* Responsiveness for NPS and Star Ratings */
         @media (max-width: 768px) {
@@ -446,17 +508,31 @@
             <div class="menu-content">
                 <form id="textAnalysisForm" onsubmit="return false;">
                     <label for="textInput">Evaluate a Review</label>
-                    <textarea 
-                        id="textInput" 
-                        name="textInput" 
-                        rows="4" 
-                        style="width: 100%; margin-bottom: 10px;">
-                    </textarea>
-                    <button type="button" onclick="analyzeText()" style="width: 100%; padding: 10px;">Analyze</button>
+                    <div class="textarea-container">
+                        <textarea 
+                            id="textInput" 
+                            name="textInput" 
+                            rows="4" 
+                            maxlength="500" 
+                            onfocus="moveCursorToStart()" 
+                            oninput="updateCharCount()"
+                            placeholder="Type your review here..."></textarea>
+                        <span id="charCounter" class="char-counter">0 / 500</span>
+                    </div>
+                    <div style="position: relative; display: flex; align-items: center; gap: 10px;">
+                        <button 
+                            type="button" 
+                            onclick="analyzeText()" 
+                            style="flex-grow: 1; padding: 10px; position: relative;">
+                            Analyze
+                        </button>
+                        <div id="loadingIndicator" class="loading-indicator"></div>
+                    </div>                    
                 </form>
+                
                 <!-- Container de resultados -->
                 <div class="result-container">
-                    <p><span id="sentimentResult">Neutral</span></p>
+                    <p><span id="sentimentResult">NA</span></p>
                     <p><span id="starRating" class="stars-container-review"></span></p>
                 </div>
                 <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm" style="padding-top: 30px;">
@@ -476,6 +552,19 @@
     </div>
 
     <script>
+        function moveCursorToStart() {
+            const textInput = document.getElementById('textInput');
+            setTimeout(() => {
+                textInput.setSelectionRange(0, 0);
+            }, 0);
+        }
+
+        function updateCharCount() {
+            const textInput = document.getElementById('textInput');
+            const charCounter = document.getElementById('charCounter');
+            charCounter.textContent = `${textInput.value.length} / ${textInput.maxLength}`;
+        }
+
         // Net Promoter Score Gauge
         const npsGaugeCtx = document.getElementById('npsGauge').getContext('2d');
     
@@ -666,7 +755,20 @@
         }
 
         function analyzeText() {
-            const textInput = document.getElementById('textInput').value;
+            const textInput = document.getElementById('textInput').value.trim(); // Remover espaços em branco
+            const sentimentResult = document.getElementById('sentimentResult');
+            const starRating = document.getElementById('starRating');
+            const loadingIndicator = document.getElementById('loadingIndicator'); // Selecionar o indicador de carregamento
+
+            // Verificar se o campo está vazio
+            if (!textInput) {
+                sentimentResult.textContent = "NA";
+                starRating.style.setProperty('--fill-width', `0%`);
+                return; // Sair da função
+            }
+
+            // Exibir o indicador de carregamento
+            loadingIndicator.style.display = 'block';
 
             fetch('/analyze-text', {
                 method: 'POST',
@@ -678,18 +780,21 @@
                 .then(response => response.json())
                 .then(data => {
                     // Atualizar os resultados na página
-                    const sentimentResult = document.getElementById('sentimentResult');
-                    const starRating = document.getElementById('starRating');
-
-                    // Atualizar sentimento
                     sentimentResult.textContent = data.sentment;
 
                     // Atualizar estrelas
                     const starPercentage = Math.min(data.star_ratings / 5 * 100, 100); // Converte para porcentagem
                     starRating.style.setProperty('--fill-width', `${starPercentage}%`);
                 })
-                .catch(err => console.error('Error analyzing text:', err));
+                .catch(err => {
+                    console.error('Error analyzing text:', err);
+                })
+                .finally(() => {
+                    // Ocultar o indicador de carregamento após a conclusão
+                    loadingIndicator.style.display = 'none';
+                });
         }
+
     </script>            
 </body>
 </html>
