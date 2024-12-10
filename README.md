@@ -1,45 +1,27 @@
 # Sentiment Analysis Application
 
-This project is a Flask-based web application that performs sentiment analysis on hotel reviews. It calculates metrics such as the Net Promoter Score (NPS), identifies common words, and extracts the most relevant positive and negative comments. Results are visualized on a modern homepage.
+This project is a Flask-based web application designed for sentiment analysis of reviews. It showcases a complete data processing pipeline, leveraging natural language processing (NLP) techniques to analyze customer feedback. The application calculates metrics such as the Net Promoter Score (NPS), identifies common words in reviews, and extracts the most relevant positive and negative comments. Results are dynamically visualized on an intuitive, modern homepage.
 
-## Features
+## Key Features
 
-- Sentiment analysis of reviews with NPS calculation.
-- Identification of common words from reviews with word frequency.
-- Extraction of most relevant positive and negative comments.
-- Dynamic support for uploading custom review datasets.
-- Persistent storage of results for quick access.
+- Sentiment Analysis: Analyzes customer reviews and classifies sentiment (positive, negative, or neutral).
+- NPS Calculation: Computes the Net Promoter Score (NPS) based on user reviews to gauge customer loyalty.
+- Word Frequency Analysis: Identifies and visualizes common words in reviews, helping to spot trends and customer concerns.
+- Relevant Comment Extraction: Extracts the most relevant positive and negative reviews for further analysis.
+- Custom Dataset Upload: Allows users to upload custom datasets and re-run the analysis.
+- Interactive Visualizations: Includes wordclouds and sentiment graphs for an engaging user experience.
 
-## Project Structure
+## Technologies Used
 
-```plaintext
-project/
-├── app/
-│   ├── __init__.py        # Package initialization
-│   ├── routes.py          # Application routes and endpoints
-│   ├── model.py           # Sentiment analysis and data processing logic
-│   ├── utils.py           # Utility functions for loading and saving results
-│
-├── static/
-│   ├── results.json       # Saved analysis results
-│
-├── templates/
-│   ├── index.html         # Homepage template for displaying analysis
-│
-├── app.py                 # Application entry point
-├── requirements.txt       # Python dependencies
-├── README.md              # Project documentation
-```
+This project was built with the following technologies:
 
-## Requirements
-
-The project is built with the following tools and libraries:
-
-- **Python 3.8+**
-- **Flask** for web development
-- **scikit-learn** for NLP
-- **NumPy** and **pandas** for data manipulation
-- **Jinja2** for templating
+- Python 3.8+: The programming language used for the application and data analysis.
+- Flask: A lightweight web framework for Python, used to build the web application.
+- scikit-learn: Used for natural language processing and sentiment analysis.
+- NumPy and pandas: Utilized for efficient data manipulation and analysis.
+- NLTK and spaCy: Used for text processing, tokenization, and linguistic analysis.
+- Jinja2: Template engine for dynamic rendering of web pages.
+- Matplotlib and wordcloud: Libraries for creating visualizations (e.g., word clouds).
 
 ### Python Dependencies
 
@@ -56,6 +38,8 @@ matplotlib==3.9.2
 wordcloud==1.9.4
 httpcore==0.9.1
 seaborn==0.13.2
+scikit-learn==1.5.2
+numpy==2.0.2
 ```
 
 ## How to Run the Application
@@ -75,18 +59,37 @@ seaborn==0.13.2
     python app.py
 ```
 
-4. Open the application in your browser at http://127.0.0.1:5000
+4. Access the app: Open your browser and navigate to http://127.0.0.1:5000 to view the application.
 
-## Usage
+## How to Use
 
-- On application startup, the default dataset (`tripadvisor_hotel_reviews.csv`) is analyzed. The dataset is sourced from [Kaggle: Trip Advisor Hotel Reviews](https://www.kaggle.com/datasets/andrewmvd/trip-advisor-hotel-reviews).
-- The results are saved in `static/results.json`.
-- Navigate to the homepage to view analysis results.
-- To analyze a new dataset:
-  1. Upload a file via the provided interface.
-  2. The app will re-run the analysis and update the results.
+- **On startup**, the default dataset (`tripadvisor_hotel_reviews.csv`) is analyzed. You can download it from [Kaggle: Trip Advisor Hotel Reviews](https://www.kaggle.com/datasets/andrewmvd/trip-advisor-hotel-reviews).
+- The analysis results (including sentiment scores, word frequency analysis, and word clouds) are displayed on the homepage.
+
+### Upload Your Own Dataset:
+1. Upload a custom CSV file via the interface.
+2. The app will analyze the new dataset and update the results on the page.
 
 ---
+
+## API Endpoints
+
+### `/` (GET):
+- Renders the homepage with the sentiment analysis results and visualizations.
+
+### `/analyze-text` (POST):
+- Analyzes a single review and returns the sentiment and score.
+
+**Example request**:
+```json
+{
+    "review": "The hotel was amazing, had a great time!"
+}
+```
+
+### `/upload` (POST):
+- Allows users to upload a CSV file containing hotel reviews.
+- Returns the sentiment analysis results for the uploaded dataset.
 
 ## Customization
 
@@ -101,17 +104,6 @@ Replace the default dataset file (`tripadvisor_hotel_reviews.csv`) with your dat
 Update the stop word list in `model.py` for a more tailored analysis.
 
 ---
-
-## Troubleshooting
-
-### TemplateNotFound Error
-
-- Ensure the `templates` folder is correctly named and located in the root of the project.
-- Verify `template_folder` is properly set in `app/routes.py`.
-
-### TypeError: Object Not JSON Serializable
-
-- Ensure that all non-serializable objects (e.g., `np.int64`) are converted using the provided `convert_to_serializable` function.
 
 ## **Contributions**
 

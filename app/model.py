@@ -129,14 +129,18 @@ def analyze(dataset_path=DEFAULT_DATASET):
     for topic in topic_scores:
         total_score = topic_scores[topic]
         count = topic_counts[topic]
-        
+
         if count == 0:
-            ratings[topic] = 1  # If there are no parts for the topic, assign a score of 1
+            ratings[topic] = 0  # If there are no parts for the topic, assign a score of 0
         else:
             average_score = total_score / count
-            # Convert the average score to a scale of 1 to 5
-            rating = ((average_score + 1) / 2) * 4 + 1  # Scale from [-1, 1] to [1, 5]
-            ratings[topic] = round(rating, 2)  # Round to 2 decimal places
+            
+            if average_score <= -0.3:
+                ratings[topic] = 0  # Assign a score of 0 for average scores <= -0.3
+            else:
+                # Map the average score from (-0.3, 1] to (0, 5)
+                rating = ((average_score + 0.3) / 1.3) * 5
+                ratings[topic] = round(rating, 2)  # Round to 2 decimal places
 
     # Prepare results to be returned
     results = {

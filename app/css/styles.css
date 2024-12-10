@@ -1,0 +1,375 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #34495e;
+    text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1); /* Highlight shadow */
+}
+
+/* Main Titles */
+h1, h2 {
+    text-align: center;
+    font-weight: 500;
+}
+h1 {
+    margin-top: 20px;
+    font-size: 2.2rem;
+}
+h2 {
+    font-size: 1.6rem;
+}
+
+/* Cards */
+.card {
+    background: #ffffff; /* Clean white background */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Modern shadows */
+    border-radius: 12px; /* Smooth corners */
+    margin: 20px;
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover effects */
+}
+
+.card:hover {
+    transform: scale(1.03); /* Slight zoom on hover */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+}
+.card h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+#npsGauge {
+    width: 100%;
+    height: auto;
+    max-width: 400px;
+    margin: 20px auto;
+}
+#positiveWordCloud, #negativeWordCloud {
+    width: 100%;
+    height: auto; /* Auto-adjust height to maintain aspect ratio */
+    border-radius: 6px; /* Smooth image corners */
+    object-fit: cover; /* Ensures proportion and fills space */
+    max-height: 200px;
+    margin: 0 auto;
+}
+.star-rating {
+    font-size: 1.5rem;
+}
+.columns-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.column {
+    width: 48%;
+    text-align: center;
+}
+
+.content-container {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.stars-container-review {
+    display: inline-block;
+    font-size: 2rem; /* Star size */
+    color: #ddd; /* Default color for empty stars */
+    position: relative;
+    width: 8ch; /* Width to contain 5 stars */
+    height: 1em; /* Ensures consistent size */
+    --fill-width: 0%; /* Initial fill width */
+}
+
+.stars-container-review::before {
+    content: '★★★★★'; /* Empty stars */
+    position: absolute;
+    top: -20px;
+    left: 15px;
+    z-index: 1;
+    width: 100%; /* Fills entire container width */
+    overflow: hidden;
+    white-space: nowrap; /* Prevents line breaks */
+    text-align: left; /* Aligns left */
+}
+
+.stars-container-review::after {
+    content: '★★★★★'; /* Filled stars */
+    position: absolute;
+    top: -20px;
+    left: 15px; /* Aligned with container start */
+    width: var(--fill-width); /* Dynamically controlled */
+    background: linear-gradient(90deg, #ffd700 0%, #ff9500 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    overflow: hidden;
+    white-space: nowrap; /* Prevents line breaks */
+    text-align: left; /* Aligns left */
+    z-index: 2;
+    transition: width 1s ease-in-out; /* Smooth animation */
+}
+
+/* Comment box styling */
+.comment-box {
+    background: #f9fbfd;
+    border: 1px solid #dfe4ea;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    font-style: italic;
+    font-size: 0.95rem; /* Adjusted font size */
+    color: #34495e; /* Neutral text tone */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+}
+
+/* Image inside comment box */
+.comment-box img {
+    display: block;
+    max-width: 100%; /* Limits image width to container */
+    height: auto; /* Auto-adjusts height to maintain aspect ratio */
+    border-radius: 6px; /* Smooth image corners */
+    object-fit: cover; /* Ensures proportion and fills space */
+}
+
+.comment-box:hover {
+    transform: scale(1.02); /* Slight highlight */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* More noticeable shadow */
+}
+
+.comment-box::before {
+    content: '“'; /* Decorative opening quote */
+    font-size: 1.5rem;
+    color: #95a5a6;
+    margin-right: 5px;
+}
+
+.comment-box::after {
+    content: '”'; /* Decorative closing quote */
+    font-size: 1.5rem;
+    color: #95a5a6;
+    margin-left: 5px;
+}
+
+/* Column settings */
+.columns-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    gap: 20px;
+}
+
+.column {
+    width: 45%;
+    min-width: 300px;
+}
+
+/* General loading overlay style */
+#loading {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    z-index: 9999;
+    justify-content: center; /* Horizontally centered */
+    align-items: center; /* Vertically centered */
+}
+
+/* Container for centering animation and text */
+#loading-content {
+    position: relative;
+    display: inline-block;
+    text-align: center; /* Center content */
+}
+
+/* Spinner style (rotating circle) */
+#spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3); /* Light border */
+    border-top: 5px solid white; /* Rotating part */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto; /* Center inside container */
+}
+
+/* Define chart container style to ensure appropriate size */
+.chart-container {
+    text-align: center;
+    margin-left: 60px;
+    width: 370px;
+    height: 370px;
+    margin-top: -30px;
+}
+
+/* Rotating animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Text style */
+#loading-text {
+    margin-top: 15px; /* Space between spinner and text */
+}
+
+/* Sidebar style */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 40px;
+    overflow-x: hidden;
+    transition: width 0.3s ease;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    color: white;
+}
+
+.side-menu:hover {
+    width: 300px;
+}
+
+/* Modern arrow indicator */
+.arrow-indicator {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid white;
+    cursor: pointer;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Hide the arrow when the menu is expanded */
+.side-menu:hover .arrow-indicator {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-50%) translateX(-10px); /* Smoothly shift inward while disappearing */
+}
+
+.menu-header {
+    display: none;
+    color: white;
+    text-align: center;
+    font-size: 20px;
+    padding: 10px;
+    border-bottom: 1px solid white;
+}
+
+.menu-content {
+    display: none;
+    padding: 20px;
+}
+
+.side-menu:hover .menu-header,
+.side-menu:hover .menu-content {
+    display: block;
+}
+
+.result-container {
+    margin-top: 20px;
+    color: white;
+}
+
+.loading-indicator {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 3px solid #ddd;
+    border-top-color: #3498db;
+    animation: spin 1s linear infinite;
+    display: none; /* Initially hidden */
+    position: absolute; /* Absolute positioning relative to button */
+    top: 50%; /* Vertically centered */
+    left: 50%; /* Horizontally centered */
+    transform: translate(-50%, -50%); /* Adjusts exact center */
+    z-index: 1; /* Ensures it stays above the button */
+}
+
+/* Rotation animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.textarea-container {
+    position: relative;
+    width: 87%;
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: 100%;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+    resize: none; /* Disable resizing for consistent layout */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+textarea::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.char-counter {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+/* Responsiveness for NPS and Star Ratings */
+@media (max-width: 768px) {
+    .columns-container {
+        flex-direction: column;
+    }
+    .column {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    #npsGauge {
+        max-width: 300px; /* Adjust NPS size on mobile devices */
+    }
+    #starRatings {
+        max-width: 300px; /* Adjust star rating size */
+    }
+    .comment-box img {
+        width: 100%; /* Adjust width to container */
+        height: auto; /* Maintain height proportion */
+        max-height: 200px; /* Limit max height on smaller devices */
+        object-fit: cover; /* Ensure proportion is preserved */
+        border-radius: 6px; /* Apply rounded corners */
+    }
+    .chart-container {
+        margin-top: -60px;
+        margin-left: -30px;
+    }
+}

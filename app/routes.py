@@ -7,6 +7,14 @@ from app import app  # Imports the pre-initialized app from the main package
 def serve_wordcloud(filename):
     return send_from_directory('static', filename)
 
+@app.route('/css/<filename>')
+def serve_css(filename):
+    return send_from_directory('css', filename)
+
+@app.route('/webfonts/<filename>')
+def serve_webfonts(filename):
+    return send_from_directory('webfonts', filename)
+
 @app.route("/")
 def home():
     """
@@ -32,8 +40,8 @@ def analyze_text():
         return {"error": "Review text is required!"}, 400
 
     try:
-        result = analyze_review(review)  # Chamada à função no model.py
-        return result  # Retorna os dados como JSON
+        result = analyze_review(review)  # Call to the function in model.py
+        return result  # Return the data as JSON
     except Exception as e:
         return {"error": str(e)}, 500
 

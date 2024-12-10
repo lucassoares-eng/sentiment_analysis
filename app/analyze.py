@@ -30,8 +30,8 @@ def analyze_sentiment(review, original_language):
 
     # Translate the full review to English for overall sentiment analysis
     if original_language != 'en':
-        translator = Translator()
         try:
+            translator = Translator()
             translated_review = translator.translate(review, src=original_language, dest="en").text
         except Exception as e:
             print(f"Error translating review to English: {e}")
@@ -123,15 +123,19 @@ def split_review_into_sentences(review, max_words=20):
     
 def calculate_star_rating(scores):
     """
-    Calculate a star rating between 1 and 5 based on the compound sentiment score.
+    Calculate a star rating between 0 and 5 based on the compound sentiment score.
+    Scores below -0.3 return 0. Scores above -0.3 are mapped to the range 0-5.
     
     :param scores: dict, Sentiment scores from VADER.
-    :return: float, Star rating between 1 and 5.
+    :return: float, Star rating between 0 and 5.
     """
-    # Transform compound score from [-1, 1] to [1, 5]
     compound = scores['compound']
-    rating = 1 + ((compound + 1) / 2) * 4  # Map to range 1-5
-    return round(rating, 4)
+    if compound <= -0.3:
+        return 0  # Return 0 for compound scores below to -0.3
+    else:
+        # Map compound score from (-0.3, 1] to (0, 5)
+        rating = ((compound + 0.3) / 1.3) * 5
+        return round(rating, 4)
 
 def detect_original_language(reviews):
     """
