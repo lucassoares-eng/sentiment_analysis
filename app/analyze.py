@@ -9,8 +9,8 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from collections import Counter
 
 if __name__ == "__main__":
-    # Download the list of stop words
     nltk.download("stopwords")
+    nltk.download('vader_lexicon')
 
 # Initialize the VADER sentiment analyzer for English
 sia = SentimentIntensityAnalyzer()
