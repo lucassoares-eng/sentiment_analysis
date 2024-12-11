@@ -1,6 +1,9 @@
+import nltk
 from app.routes import app
 from app.model import analyze
 from app.utils import load_results, save_results
+
+nltk.download('vader_lexicon')
 
 if __name__ == "__main__":
     results = load_results()
