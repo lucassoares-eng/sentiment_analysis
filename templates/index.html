@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results Dashboard</title>
-    <!-- Including Chart.js and D3.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/wordcloud2.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="/js/chart.min.js"></script>
+    <script src="/js/chartjs-plugin-datalabels.min.js"></script>
+    <!-- D3.js -->
+    <script src="/js/d3.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="/css/poppins.css" rel="stylesheet">
     <!-- Add Font Awesome -->
     <link rel="stylesheet" href="/css/all.min.css">
     <!-- External CSS -->
@@ -176,19 +177,18 @@
             </div>
         </div>
 
-        <footer style="background-color: #f8f9fa; padding: 30px; border-top: 1px solid #e1e1e1;">
-            <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+        <footer style="margin-top: 30px; padding-bottom: 20px; border-top: 1px solid #e1e1e1; width: 100vw; position: relative; left: 50%; transform: translateX(-50%);">
+            <div style="max-width: 80%; margin: 0 auto; text-align: center;">
                 <!-- Contributions Section -->
                 <div style="margin-bottom: 30px;">
                     <h3 style="font-size: 24px; margin-bottom: 15px;">Contributions</h3>
                     <p style="font-size: 16px; color: #333333; line-height: 1.6;">
                         Contributions are welcome! Feel free to open issues and submit pull requests to improve the project.
                     </p>
-                    <a href="https://github.com/lucassoares-eng/sentiment-analysis" target="_blank" 
-                        style="font-size: 16px; color: #007BFF; text-decoration: none; font-weight: bold; transition: color 0.3s;">
+                    <a class= link href="https://github.com/lucassoares-eng/sentiment-analysis" target="_blank">
                         <i class="fab fa-github" style="margin-right: 5px;"></i>Project link
                     </a>
-                    <div style="margin-top: 10px; text-align: center; background-color: #f1f1f1; padding: 10px; font-size: 14px; border-radius: 4px; max-width: 90%; margin: 10px auto;">
+                    <div style="margin-top: 10px; text-align: center; background-color: #f1f1f1; padding: 10px; font-size: 14px; border-radius: 4px; max-width: 70%; margin: 10px auto;">
                         <span style="color: #333; font-family: 'Courier New', Courier, monospace;">
                             git clone https://github.com/lucassoares-eng/sentiment-analysis.git
                         </span>
@@ -205,14 +205,14 @@
                         If you have questions or suggestions, feel free to reach out:
                     </p>
                     <ul style="list-style: none; padding: 0; margin: 0;">
-                        <li style="font-size: 16px; margin-bottom: 10px;">
-                            <i style="color: #007BFF; margin-right: 10px;" class="fas fa-envelope"></i>
-                            <a href="mailto:lucasjs.eng@gmail.com" style="color: #007BFF; text-decoration: none; font-weight: bold;">lucasjs.eng@gmail.com</a>
+                        <li class= link style="font-size: 16px; margin-bottom: 10px;">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:lucasjs.eng@gmail.com" style="color: #007BFF; text-decoration: none;">lucasjs.eng@gmail.com</a>
                         </li>
-                        <li style="font-size: 16px; margin-bottom: 10px;">
-                            <i style="color: #007BFF; margin-right: 10px;" class="fab fa-linkedin"></i>
+                        <li class= link style="font-size: 16px; margin-bottom: 10px;">
+                            <i class="fab fa-linkedin"></i>
                             <a href="https://www.linkedin.com/in/lucas-de-jesus-soares-33486b42/" target="_blank" 
-                               style="color: #007BFF; text-decoration: none; font-weight: bold;">Lucas de Jesus Soares</a>
+                               style="color: #007BFF; text-decoration: none;">Lucas de Jesus Soares</a>
                         </li>
                     </ul>
                 </div>

@@ -17,6 +17,18 @@ h2 {
     font-size: 1.6rem;
 }
 
+/* Links */
+.link {
+    font-size: 16px;
+    color: #007BFF;
+    text-decoration: none;
+    transition: color 0.3s, text-decoration 0.3s;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
 /* Cards */
 .card {
     background: #ffffff; /* Clean white background */

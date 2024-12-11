@@ -1,15 +1,32 @@
+import os
 from flask import render_template, request, redirect, url_for, send_from_directory
 from app.model import analyze, analyze_review
 from app.utils import convert_to_serializable, delete_file, generate_wordcloud, load_results, save_file
 from app import app  # Imports the pre-initialized app from the main package
 
+# Middleware para forçar HTTPS apenas em produção
+@app.before_request
+def enforce_https():
+    if os.getenv("FLASK_ENV") == "production":
+        # Redireciona HTTP para HTTPS
+        if request.headers.get("X-Forwarded-Proto", "http") == "http":
+            return redirect(request.url.replace("http://", "https://"), code=301)
+
 @app.route('/static/<filename>')
 def serve_wordcloud(filename):
     return send_from_directory('static', filename)
 
+@app.route('/js/<filename>')
+def serve_js(filename):
+    return send_from_directory('js', filename)
+
 @app.route('/css/<filename>')
 def serve_css(filename):
     return send_from_directory('css', filename)
+
+@app.route('/fonts/Poppins/<filename>')
+def serve_fonts(filename):
+    return send_from_directory('fonts/Poppins', filename)
 
 @app.route('/webfonts/<filename>')
 def serve_webfonts(filename):

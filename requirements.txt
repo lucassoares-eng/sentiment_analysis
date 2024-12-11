@@ -1,5 +1,5 @@
 Flask==3.1.0
-gunicorn==20.1.0
+gunicorn==23.0.0
 nltk==3.9.1
 spacy==3.8.2
 pandas==2.2.3
@@ -11,3 +11,4 @@ httpcore==0.9.1
 seaborn==0.13.2
 scikit-learn==1.5.2
 numpy==2.0.2
+flask-talisman==1.1.0

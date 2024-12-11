@@ -79,6 +79,9 @@ target/
 .ipynb_checkpoints
 *.ipynb
 
+# SSL
+*.pem
+
 # IPython
 profile_default/
 ipython_config.py
