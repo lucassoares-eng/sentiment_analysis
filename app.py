@@ -1,9 +1,6 @@
 import os
 import zipfile
 import nltk
-from app.routes import app
-from app.model import analyze
-from app.utils import load_results, save_results
 
 # Define the location to download and store the data
 nltk_data_dir = "./nltk_data"
@@ -21,6 +18,10 @@ if os.path.exists(zip_path):
         print(f"Files extracted to {extract_to}")
 else:
     print(f"Error: {zip_path} not found!")
+
+from app.routes import app
+from app.model import analyze
+from app.utils import load_results, save_results
 
 if __name__ == "__main__":
     results = load_results()
