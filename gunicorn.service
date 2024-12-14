@@ -7,7 +7,7 @@ User=lucasjs_eng
 Group=www-data
 WorkingDirectory=/home/lucasjs_eng/sentiment-analysis
 Environment="PATH=/home/lucasjs_eng/sentiment-analysis/venv/bin"
-ExecStart=/home/lucasjs_eng/sentiment-analysis/venv/bin/gunicorn -w 4 -b 0.0.0.0:8000 app:app
+ExecStart=/home/lucasjs_eng/sentiment-analysis/venv/bin/gunicorn -w 4 -b 0.0.0.0:8000 routes.py:app
 
 [Install]
 WantedBy=multi-user.target

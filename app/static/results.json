@@ -102,10 +102,10 @@
     },
     "star_ratings": 4.36,
     "topics_rating": {
-        "service": 2.98,
         "price": 2.75,
         "experience": 2.46,
-        "quality": 1.91,
-        "delivery": 2.24
+        "delivery": 2.24,
+        "service": 2.98,
+        "quality": 1.91
     }
 }

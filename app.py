@@ -1,12 +1,5 @@
-from app import app  # Importa o app inicializado no __init__.py
-from app.utils import import_nltk, load_results, save_results
-from app.model import analyze
+from app.routes import app
 
-import_nltk()
-
-# Analisa os resultados ao iniciar o servidor
-results = load_results()
-if not results:
-    results = analyze()
-    save_results(results)
-    print("Default analysis completed")
+if __name__ == "__main__":
+    # Start the Flask server
+    app.run(debug=True)

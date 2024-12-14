@@ -2,7 +2,11 @@ import os
 from flask import render_template, request, redirect, url_for, send_from_directory
 from app.model import analyze, analyze_review
 from app.utils import convert_to_serializable, delete_file, generate_wordcloud, load_results, save_file
-from app import app  # Imports the pre-initialized app from the main package
+from flask import Flask
+from app.model import analyze
+from app.utils import load_results, save_results
+
+app = Flask(__name__, template_folder="templates")
 
 # Middleware para forçar HTTPS apenas em produção
 @app.before_request
@@ -38,6 +42,11 @@ def home():
     Renders the home page with data from the results.json file.
     """
     results = load_results()
+    # Run the analysis on the default dataset when the app starts
+    if not results:
+        results = analyze()
+        save_results(results)
+        print("Default analysis completed")
     generate_wordcloud(results['positive_common_words'], 'positive_wordcloud.png')
     generate_wordcloud(results['negative_common_words'], 'negative_wordcloud.png')
     if results:

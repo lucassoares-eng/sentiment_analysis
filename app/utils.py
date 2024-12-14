@@ -19,6 +19,34 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(DATA_FOLDER, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# Define the location to download and store the data
+nltk_data_dir = "./nltk_data"
+nltk.data.path.append(nltk_data_dir)
+
+# Path to the specific file
+vader_file_path = os.path.join(nltk_data_dir, "sentiment", "vader_lexicon", "vader_lexicon.txt")
+
+# Check if the file already exists
+if not os.path.exists(vader_file_path):
+    print("vader_lexicon.txt not found. Proceeding with download and extraction...")
+
+    # Download the dataset
+    nltk.download('vader_lexicon', download_dir=nltk_data_dir)
+
+    # Path to the downloaded ZIP file
+    zip_path = os.path.join(nltk_data_dir, "sentiment", "vader_lexicon.zip")
+    extract_to = os.path.join(nltk_data_dir, "sentiment")
+
+    # Manually extract if the ZIP file exists
+    if os.path.exists(zip_path):
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_to)
+            print(f"Files extracted to {extract_to}")
+    else:
+        print(f"Error: {zip_path} not found!")
+else:
+    print("vader_lexicon.txt already exists. Skipping download.")
+
 def convert_to_serializable(obj):
     """
     Recursively converts non-serializable objects (e.g., np.int64, np.float64) into serializable Python types.
@@ -118,21 +146,3 @@ def generate_wordcloud(word_data, file_name):
 # Converte a lista de dicionários para o formato esperado
 def convert_to_wordcloud_format(data):
     return {item["word"]: item["count"] for item in data}
-
-def import_nltk():
-    # Define the location to download and store the data
-    nltk_data_dir = "./nltk_data"
-    nltk.data.path.append(nltk_data_dir)
-    nltk.download('vader_lexicon', download_dir=nltk_data_dir)
-
-    # Path to the downloaded ZIP file
-    zip_path = os.path.join(nltk_data_dir, "sentiment", "vader_lexicon.zip")
-    extract_to = os.path.join(nltk_data_dir, "sentiment")
-
-    # Manually extract if the ZIP file exists
-    if os.path.exists(zip_path):
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(extract_to)
-            print(f"Files extracted to {extract_to}")
-    else:
-        print(f"Error: {zip_path} not found!")
