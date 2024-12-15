@@ -3,18 +3,15 @@ from flask import render_template, request, redirect, url_for, send_from_directo
 from app.model import analyze, analyze_review
 from app.utils import convert_to_serializable, delete_file, generate_wordcloud, load_results, save_file
 from flask import Flask
+from flask_talisman import Talisman
 from app.model import analyze
 from app.utils import load_results, save_results
 
 app = Flask(__name__, template_folder="templates")
 
-# Middleware to enforce HTTPS only in production
-@app.before_request
-def enforce_https():
-    if os.getenv("FLASK_ENV") == "production":
-        # Redirect HTTP to HTTPS
-        if request.headers.get("X-Forwarded-Proto", "http") == "http":
-            return redirect(request.url.replace("http://", "https://"), code=301)
+# Apply Talisman for HTTPS enforcement
+if os.getenv("FLASK_ENV") == "production":
+    Talisman(app, content_security_policy=None)
 
 @app.route('/static/<filename>')
 def serve_wordcloud(filename):
