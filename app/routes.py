@@ -8,11 +8,11 @@ from app.utils import load_results, save_results
 
 app = Flask(__name__, template_folder="templates")
 
-# Middleware para forçar HTTPS apenas em produção
+# Middleware to enforce HTTPS only in production
 @app.before_request
 def enforce_https():
     if os.getenv("FLASK_ENV") == "production":
-        # Redireciona HTTP para HTTPS
+        # Redirect HTTP to HTTPS
         if request.headers.get("X-Forwarded-Proto", "http") == "http":
             return redirect(request.url.replace("http://", "https://"), code=301)
 

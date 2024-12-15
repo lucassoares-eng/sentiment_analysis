@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from wordcloud import WordCloud
 import matplotlib
-matplotlib.use('Agg')  # Usa o backend 'Agg', que não exige uma GUI
+matplotlib.use('Agg')  # Uses the 'Agg' backend, which does not require a GUI
 import matplotlib.pyplot as plt
 
 DATA_FOLDER = "data"
@@ -95,24 +95,24 @@ def save_file(uploaded_file):
 def generate_wordcloud(word_data, file_name):
     word_freq = convert_to_wordcloud_format(word_data)
     
-    # Condicional para escolher o colormap com base no nome do arquivo
+    # Conditional to choose the colormap based on the file name
     if "positive" in file_name.lower():
-        colormap = 'Greens'  # Usar tons de verde para palavras positivas
+        colormap = 'Greens'  # Use green shades for positive words
     else:
-        colormap = 'Reds'  # Usar tons de vermelho para palavras negativas
+        colormap = 'Reds'  # Use red shades for negative words
 
-    # Gerando a nuvem de palavras com a cor especificada
+    # Generating the word cloud with the specified color scheme
     wordcloud = WordCloud(width=800, height=400, background_color='white', colormap=colormap).generate_from_frequencies(word_freq)
     
     output_file = os.path.join(STATIC_FOLDER, file_name)
     
-    # Gera a nuvem de palavras e salva a imagem no arquivo
+    # Generates the word cloud and saves the image to the file
     plt.figure(figsize=(10, 5))
     plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')  # Remove o eixo
-    plt.savefig(output_file, format='png')  # Salva a imagem
+    plt.axis('off')  # Removes the axes
+    plt.savefig(output_file, format='png')  # Saves the image
     plt.close()
 
-# Converte a lista de dicionários para o formato esperado
+# Converts the list of dictionaries to the expected format
 def convert_to_wordcloud_format(data):
     return {item["word"]: item["count"] for item in data}

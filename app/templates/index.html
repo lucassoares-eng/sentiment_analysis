@@ -71,7 +71,7 @@
         <!-- Display of rating -->
         <div id="rating-value-container" style="text-align: center; margin: 20px auto;">
             <div id="rating-value" style="font-size: 30px; margin-top: 0px">
-                0.0 / 5
+                {{ star_ratings | round(1)}} / 5
             </div>
             <!-- Star container -->
             <div class="stars-container"></div>
@@ -247,56 +247,12 @@
         // Actual score
         const finalRating = {{ star_ratings }};
     
-        // Animation settings
-        const duration = 1000; // Animation duration (ms)
-        const steps = 60; // Number of increments
-        const interval = duration / steps; // Interval between updates
-        const npsIncrement = Math.abs(npsPercentage) / steps; // NPS increment per step
-        const ratingIncrement = finalRating / steps; // Star rating increment per step
-    
         let currentPercentage = 0; // Initial value for NPS
         let currentRating = 0.0; // Initial value for star rating
     
-        const ratingDisplay = document.getElementById('rating-value');
         const starsContainer = document.querySelector('.stars-container');
-    
-        // Synchronization of animations
-        const animateValues = () => {
-            let stepCount = 0; // Step counter
-    
-            const intervalId = setInterval(() => {
-                stepCount++;
-    
-                // Update NPS value (incrementing or decrementing)
-                if (npsPercentage >= 0) {
-                    // If positive, increment
-                    currentPercentage += npsIncrement;
-                    if (currentPercentage >= npsPercentage) {
-                        currentPercentage = npsPercentage; // Ensure it doesn't exceed
-                    }
-                } else {
-                    // If negative, decrement
-                    currentPercentage -= npsIncrement;
-                    if (currentPercentage <= npsPercentage) {
-                        currentPercentage = npsPercentage; // Ensure it doesn't exceed
-                    }
-                }
-    
-                // Update star rating value
-                currentRating += ratingIncrement;
-                if (currentRating >= finalRating) {
-                    currentRating = finalRating; // Ensure it doesn't exceed
-                }
-    
-                // Update displayed star rating value
-                ratingDisplay.textContent = `${currentRating.toFixed(1)} / 5`;
-    
-                // Check if animations are complete
-                if (stepCount >= steps) {
-                    clearInterval(intervalId); // End animation
-                }
-            }, interval);
-        };
+
+        currentPercentage = npsPercentage;
     
         // Setting up the chart with plugin for animated text
         const npsGauge = new Chart(npsGaugeCtx, {

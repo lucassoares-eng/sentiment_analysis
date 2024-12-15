@@ -1,72 +1,51 @@
 import os
-from multiprocessing import Pool, Manager
+from tqdm import tqdm
 from app.analyze import analyze_sentiment, calculate_star_rating, detect_original_language, generate_common_words
 from app.utils import load_file
 
 DEFAULT_DATASET = os.path.join("data", "tripadvisor_hotel_reviews.csv")
 
 # Function to process a single review
-def process_review(review, original_language, sentiment_list, score_list, star_list, positive_list, negative_list):
+def process_review(review, original_language):
     try:
         analyze_result = analyze_sentiment(review, original_language)
         sentiment_score = analyze_result['scores']
         sentiment = analyze_result['sentiment']
-        star_rating = calculate_star_rating(sentiment_score)  # Calculates the star rating
+        star_rating = calculate_star_rating(sentiment_score)
         positive_parts = analyze_result['positive_parts']
         negative_parts = analyze_result['negative_parts']
-
-        # Storing results in shared lists
-        sentiment_list.append(sentiment)
-        score_list.append(sentiment_score)
-        star_list.append(star_rating)
-        positive_list.extend(positive_parts)
-        negative_list.extend(negative_parts)
+        return sentiment, sentiment_score, star_rating, positive_parts, negative_parts
     except Exception as e:
         print(f"Error analyzing review: {e}")
-        sentiment_list.append("Error")
-        score_list.append({})
-        star_list.append(3)  # Default star rating in case of error
-        positive_list.extend([])
-        negative_list.extend([])
+        return "Error", {}, 3, [], []  # Default values in case of error
 
 def analyze(dataset_path=DEFAULT_DATASET):
     """
     Analyzes the sentiment of reviews, calculates the NPS score, and returns
     detailed results, including the most common words, sentiment distribution,
     number of reviews, detractors, promoters, and the most relevant comments.
-    
-    Args:
-        dataset_path (str): Path to the dataset file (.csv).
-    
-    Returns:
-        dict: Results of the analysis.
     """
     data = load_file(dataset_path)
     reviews = data["Review"]
 
-    # Creating a Manager to share lists between processes
-    with Manager() as manager:
-        sentiment_list = manager.list()
-        score_list = manager.list()
-        star_list = manager.list()
-        positive_list = manager.list()
-        negative_list = manager.list()
+    # Detect the predominant language
+    original_language = detect_original_language(reviews)
 
-        # Detect the predominant language
-        original_language = detect_original_language(reviews)
+    # Initialize lists to store results
+    sentiments = []
+    sentiment_scores = []
+    star_ratings = []
+    positive_parts = []
+    negative_parts = []
 
-        # Using Pool for parallel processing
-        print('Examining Reviews...')
-        with Pool() as pool:
-            # Passing the shared lists to the pool
-            pool.starmap(process_review, [(review, original_language, sentiment_list, score_list, star_list, positive_list, negative_list) for review in reviews])
-
-        # Converting the shared lists back to normal lists after processing
-        sentiments = list(sentiment_list)
-        sentiment_scores = list(score_list)
-        star_ratings = list(star_list)
-        positive_parts = list(positive_list)
-        negative_parts = list(negative_list)
+    print('Examining Reviews...')
+    for review in tqdm(reviews):
+        sentiment, sentiment_score, star_rating, pos_parts, neg_parts = process_review(review, original_language)
+        sentiments.append(sentiment)
+        sentiment_scores.append(sentiment_score)
+        star_ratings.append(star_rating)
+        positive_parts.extend(pos_parts)
+        negative_parts.extend(neg_parts)
 
     # Updating the DataFrame with results
     data["sentiment"] = sentiments
@@ -92,8 +71,8 @@ def analyze(dataset_path=DEFAULT_DATASET):
     negative_common_words = generate_common_words(negative_sentences, original_language)
 
     # Sort positive and negative comments by their scores
-    sorted_positive_parts = sorted(positive_parts, key=lambda x: x['score'], reverse=True)  # Descending by score
-    sorted_negative_parts = sorted(negative_parts, key=lambda x: x['score'])  # Ascending by score
+    sorted_positive_parts = sorted(positive_parts, key=lambda x: x['score'], reverse=True)
+    sorted_negative_parts = sorted(negative_parts, key=lambda x: x['score'])
 
     # Extract the 3 most relevant comments (positive and negative)
     most_relevant_positive = [entry['original'] for entry in sorted_positive_parts[:3]]
@@ -113,34 +92,26 @@ def analyze(dataset_path=DEFAULT_DATASET):
     for part in all_parts:
         if part["main_topic"]:
             topic = part["main_topic"]
-            
-            # Initialize in the dictionary if the topic does not exist yet
             if topic not in topic_scores:
                 topic_scores[topic] = 0
                 topic_counts[topic] = 0
-            
-            # Add the score and increment the count for the topic
             topic_scores[topic] += part["score"]
             topic_counts[topic] += 1
-    
+
     # Calculate the average score for each topic and convert it to a scale of 1 to 10
     ratings = {}
-
     for topic in topic_scores:
         total_score = topic_scores[topic]
         count = topic_counts[topic]
-
         if count == 0:
-            ratings[topic] = 0  # If there are no parts for the topic, assign a score of 0
+            ratings[topic] = 0
         else:
             average_score = total_score / count
-            
             if average_score <= -0.3:
-                ratings[topic] = 0  # Assign a score of 0 for average scores <= -0.3
+                ratings[topic] = 0
             else:
-                # Map the average score from (-0.3, 1] to (0, 5)
                 rating = ((average_score + 0.3) / 1.3) * 5
-                ratings[topic] = round(rating, 2)  # Round to 2 decimal places
+                ratings[topic] = round(rating, 2)
 
     # Prepare results to be returned
     results = {

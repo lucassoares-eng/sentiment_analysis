@@ -40,6 +40,7 @@ httpcore==0.9.1
 seaborn==0.13.2
 scikit-learn==1.5.2
 numpy==2.0.2
+python-dotenv==1.0.1
 ```
 
 ## How to Run the Application
