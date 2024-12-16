@@ -1,31 +1,31 @@
-from flask import render_template, request, redirect, url_for, send_from_directory
+from flask import Blueprint, render_template, request, redirect, url_for, send_from_directory
 from app.model import analyze, analyze_review
 from app.utils import convert_to_serializable, delete_file, generate_wordcloud, load_results, save_file, save_results
-from flask import Flask
 
-app = Flask(__name__, template_folder="templates")
+# Define the blueprint
+routes_bp = Blueprint("routes", __name__)
 
-@app.route('/static/<filename>')
+@routes_bp.route('/static/<filename>')
 def serve_wordcloud(filename):
     return send_from_directory('static', filename)
 
-@app.route('/js/<filename>')
+@routes_bp.route('/js/<filename>')
 def serve_js(filename):
     return send_from_directory('js', filename)
 
-@app.route('/css/<filename>')
+@routes_bp.route('/css/<filename>')
 def serve_css(filename):
     return send_from_directory('css', filename)
 
-@app.route('/fonts/Poppins/<filename>')
+@routes_bp.route('/fonts/Poppins/<filename>')
 def serve_fonts(filename):
     return send_from_directory('fonts/Poppins', filename)
 
-@app.route('/webfonts/<filename>')
+@routes_bp.route('/webfonts/<filename>')
 def serve_webfonts(filename):
     return send_from_directory('webfonts', filename)
 
-@app.route("/")
+@routes_bp.route("/")
 def home():
     """
     Renders the home page with data from the results.json file.
@@ -42,8 +42,8 @@ def home():
         return render_template("index.html", **results)
     else:
         return "Results file not found!", 404
-    
-@app.route("/analyze-text", methods=["POST"])
+
+@routes_bp.route("/analyze-text", methods=["POST"])
 def analyze_text():
     """
     Route to analyze a single text review and return the sentiment and star ratings.
@@ -60,7 +60,7 @@ def analyze_text():
     except Exception as e:
         return {"error": str(e)}, 500
 
-@app.route("/upload", methods=["POST"])
+@routes_bp.route("/upload", methods=["POST"])
 def upload_and_analyze():
     """
     Route to receive the user's file, analyze it, and render the analysis page.
@@ -76,7 +76,6 @@ def upload_and_analyze():
         return "No file selected!", 400
 
     if uploaded_file:
-
         file_path = save_file(uploaded_file)
         # Loads and analyzes the file's data
         try:
@@ -92,4 +91,4 @@ def upload_and_analyze():
             generate_wordcloud(results['negative_common_words'], 'negative_wordcloud.png')
             return render_template("index.html", **results)
 
-    return redirect(url_for("home"))
+    return redirect(url_for("routes.home"))
