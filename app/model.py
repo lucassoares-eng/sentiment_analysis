@@ -1,7 +1,7 @@
 import os
 from tqdm import tqdm
-from app.analyze import analyze_sentiment, calculate_star_rating, detect_original_language, generate_common_words
-from app.utils import load_file
+from .analyze import analyze_sentiment, calculate_star_rating, detect_original_language, generate_common_words
+from .utils import load_file
 
 DEFAULT_DATASET = os.path.join("data", "tripadvisor_hotel_reviews.csv")
 

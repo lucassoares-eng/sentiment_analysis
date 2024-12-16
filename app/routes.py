@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, send_from_directory
-from app.model import analyze, analyze_review
-from app.utils import convert_to_serializable, delete_file, generate_wordcloud, load_results, save_file, save_results
+from .model import analyze, analyze_review
+from .utils import convert_to_serializable, delete_file, generate_wordcloud, load_results, save_file, save_results
 
 # Define the blueprint
 routes_bp = Blueprint("routes", __name__)
