@@ -20,8 +20,8 @@ This project was built with the following technologies:
 - scikit-learn: Used for natural language processing and sentiment analysis.
 - NumPy and pandas: Utilized for efficient data manipulation and analysis.
 - NLTK and spaCy: Used for text processing, tokenization, and linguistic analysis.
-- Jinja2: Template engine for dynamic rendering of web pages.
 - Matplotlib and wordcloud: Libraries for creating visualizations (e.g., word clouds).
+- Flask: A lightweight WSGI web application framework for Python.
 
 ### Python Dependencies
 
@@ -30,17 +30,14 @@ Ensure you install the following Python dependencies:
 ```plaintext
 Flask==3.1.0
 nltk==3.9.1
-spacy==3.8.2
 pandas==2.2.3
 langdetect==1.0.9
 googletrans==4.0.0-rc1
 matplotlib==3.9.2
 wordcloud==1.9.4
-httpcore==0.9.1
-seaborn==0.13.2
 scikit-learn==1.5.2
 numpy==2.0.2
-python-dotenv==1.0.1
+tqdm==4.67.0
 ```
 
 ## How to Run the Application
