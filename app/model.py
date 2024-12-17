@@ -3,7 +3,10 @@ from tqdm import tqdm
 from .analyze import analyze_sentiment, calculate_star_rating, detect_original_language, generate_common_words
 from .utils import load_file
 
-DEFAULT_DATASET = os.path.join("data", "tripadvisor_hotel_reviews.csv")
+# Base directory of the project
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+DATA_FOLDER = os.path.join(BASE_DIR, "data")
+DEFAULT_DATASET = os.path.join(DATA_FOLDER, "tripadvisor_hotel_reviews.csv")
 
 # Function to process a single review
 def process_review(review, original_language):

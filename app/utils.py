@@ -7,11 +7,16 @@ import matplotlib
 matplotlib.use('Agg')  # Uses the 'Agg' backend, which does not require a GUI
 import matplotlib.pyplot as plt
 
-DATA_FOLDER = "data"
+# Base directory of the project
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# Define folders relative to the base directory
+DATA_FOLDER = os.path.join(BASE_DIR, "data")
 DEFAULT_DATASET = os.path.join(DATA_FOLDER, "tripadvisor_hotel_reviews.csv")
-STATIC_FOLDER = "app/static"
+STATIC_FOLDER = os.path.join(BASE_DIR, "static")
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
+
 ALLOWED_EXTENSIONS = {'csv'}
-UPLOAD_FOLDER = "uploads"
 
 # Ensure folders exist
 os.makedirs(DATA_FOLDER, exist_ok=True)
