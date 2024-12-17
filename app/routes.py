@@ -5,26 +5,6 @@ from .utils import convert_to_serializable, delete_file, generate_wordcloud, loa
 # Define the blueprint
 routes_bp = Blueprint("routes", __name__)
 
-@routes_bp.route('/static/<filename>')
-def serve_wordcloud(filename):
-    return send_from_directory('static', filename)
-
-@routes_bp.route('/js/<filename>')
-def serve_js(filename):
-    return send_from_directory('js', filename)
-
-@routes_bp.route('/css/<filename>')
-def serve_css(filename):
-    return send_from_directory('css', filename)
-
-@routes_bp.route('/fonts/Poppins/<filename>')
-def serve_fonts(filename):
-    return send_from_directory('fonts/Poppins', filename)
-
-@routes_bp.route('/webfonts/<filename>')
-def serve_webfonts(filename):
-    return send_from_directory('webfonts', filename)
-
 @routes_bp.route("/")
 def home():
     """
