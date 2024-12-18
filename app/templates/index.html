@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results Dashboard</title>
     <!-- Chart.js -->
-    <script src="{{ url_for('sentiment_analysis.static', filename='js/chart.min.js') }}"></script>
-    <script src="{{ url_for('sentiment_analysis.static', filename='js/chartjs-plugin-datalabels.min.js') }}"></script>
+    <script src="{{ url_for('sentiment_analysis.serve_static', filename='js/chart.min.js') }}"></script>
+    <script src="{{ url_for('sentiment_analysis.serve_static', filename='js/chartjs-plugin-datalabels.min.js') }}"></script>
     <!-- D3.js -->
-    <script src="{{ url_for('sentiment_analysis.static', filename='js/d3.min.js') }}"></script>
+    <script src="{{ url_for('sentiment_analysis.serve_static', filename='js/d3.min.js') }}"></script>
     <!-- Google Fonts -->
     <link href="{{ url_for('sentiment_analysis.serve_css', filename='poppins.css') }}" rel="stylesheet">
     <!-- Add Font Awesome -->
     <link rel="stylesheet" href="{{ url_for('sentiment_analysis.serve_css', filename='all.min.css') }}">
     <!-- External CSS -->
-    <link rel="stylesheet" href="{{ url_for('sentiment_analysis.static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('sentiment_analysis.serve_static', filename='css/styles.css') }}">
 <style>
     .stars-container {
         display: inline-block;
