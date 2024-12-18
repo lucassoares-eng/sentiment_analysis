@@ -8,7 +8,7 @@ routes_bp = Blueprint(
     __name__,
     template_folder="templates",  # Caminho relativo para a pasta de templates do módulo
     static_folder="static",        # Caminho relativo para a pasta de arquivos estáticos do módulo     
-    static_url_path="/static"
+    static_url_path="/static/sentiment_analysis"
 )
 
 @routes_bp.route('/css/<filename>')
