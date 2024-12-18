@@ -1,4 +1,4 @@
-from flask import Blueprint, make_response, render_template, request, redirect, send_from_directory, url_for
+from flask import Blueprint, make_response, render_template, request, redirect, url_for
 from .model import analyze, analyze_review
 from .utils import convert_to_serializable, delete_file, generate_wordcloud, load_results, save_file, save_results
 
@@ -15,10 +15,6 @@ def serve_css(filename):
     response = make_response(render_template(filename))
     response.headers['Content-Type'] = 'text/css'
     return response
-
-@routes_bp.route('/static/<filename>')
-def serve_static(filename):
-    return send_from_directory('static', filename)
 
 @routes_bp.route("/")
 def home():
