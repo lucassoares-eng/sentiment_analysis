@@ -1,9 +1,23 @@
-from flask import Blueprint, render_template, request, redirect, url_for, send_from_directory
+from flask import Blueprint, make_response, render_template, request, redirect, url_for, send_from_directory
 from .model import analyze, analyze_review
 from .utils import convert_to_serializable, delete_file, generate_wordcloud, load_results, save_file, save_results
 
 # Define the blueprint
 routes_bp = Blueprint("routes", __name__)
+
+# Configure o Blueprint para usar uma pasta de templates específica
+routes_bp = Blueprint(
+    "sentiment_analysis",
+    __name__,
+    template_folder="templates",  # Caminho relativo para a pasta de templates do módulo
+    static_folder="static"        # Caminho relativo para a pasta de arquivos estáticos do módulo
+)
+
+@routes_bp.route('/css/<filename>')
+def serve_css(filename):
+    response = make_response(render_template(filename))
+    response.headers['Content-Type'] = 'text/css'
+    return response
 
 @routes_bp.route("/")
 def home():
@@ -41,7 +55,7 @@ def analyze_text():
         return {"error": str(e)}, 500
 
 @routes_bp.route("/upload", methods=["POST"])
-def upload_and_analyze():
+def upload():
     """
     Route to receive the user's file, analyze it, and render the analysis page.
     """

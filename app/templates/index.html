@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results Dashboard</title>
     <!-- Chart.js -->
-    <script src="/static/js/chart.min.js"></script>
-    <script src="/static/js/chartjs-plugin-datalabels.min.js"></script>
+    <script src="{{ url_for('sentiment_analysis.static', filename='js/chart.min.js') }}"></script>
+    <script src="{{ url_for('sentiment_analysis.static', filename='js/chartjs-plugin-datalabels.min.js') }}"></script>
     <!-- D3.js -->
-    <script src="/static/js/d3.min.js"></script>
+    <script src="{{ url_for('sentiment_analysis.static', filename='js/d3.min.js') }}"></script>
     <!-- Google Fonts -->
-    <link href="/static/css/poppins.css" rel="stylesheet">
+    <link href="{{ url_for('sentiment_analysis.serve_css', filename='poppins.css') }}" rel="stylesheet">
     <!-- Add Font Awesome -->
-    <link rel="stylesheet" href="/static/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('sentiment_analysis.serve_css', filename='all.min.css') }}">
     <!-- External CSS -->
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="{{ url_for('sentiment_analysis.static', filename='css/styles.css') }}">
 <style>
     .stars-container {
         display: inline-block;
@@ -101,7 +101,7 @@
             <div class="column">
                 <h2>Positives</h2>
                 <div class="card">
-                    <img src="/static/positive_wordcloud.png" alt="Positive Words Word Cloud" id="positiveWordCloud">
+                    <img src="{{ url_for('sentiment_analysis.static', filename='positive_wordcloud.png') }}" alt="Positive Words Word Cloud" id="positiveWordCloud">
                     
                     {% for comment in most_relevant_comments['positive'] %}
                     <div class="comment-box">
@@ -115,7 +115,7 @@
             <div class="column">
                 <h2>Negatives</h2>
                 <div class="card">
-                    <img src="/static/negative_wordcloud.png" alt="Negative Words Word Cloud" id="negativeWordCloud">
+                    <img src="{{ url_for('sentiment_analysis.static', filename='negative_wordcloud.png') }}" alt="Negative Words Word Cloud" id="negativeWordCloud">
                     
                     {% for comment in most_relevant_comments['negative'] %}
                         <div class="comment-box">
@@ -163,7 +163,7 @@
                     <p><span id="sentimentResult">NA</span></p>
                     <p><span id="starRating" class="stars-container-review"></span></p>
                 </div>
-                <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm" style="padding-top: 30px;">
+                <form action="{{ url_for('sentiment_analysis.upload') }}" method="POST" enctype="multipart/form-data" id="uploadForm" style="padding-top: 30px;">
                     <label for="file">Upload a .csv file with a 'Review' column</label>
                     <input 
                         type="file" 
@@ -389,8 +389,9 @@
 
             // Display the loading indicator
             loadingIndicator.style.display = 'block';
-
-            fetch('/analyze-text', {
+            
+            const analyzeTextUrl = "{{ url_for('sentiment_analysis.analyze_text') }}";
+            fetch(analyzeTextUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
