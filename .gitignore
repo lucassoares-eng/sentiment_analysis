@@ -170,3 +170,4 @@ nltk_data/
 app/static/negative_wordcloud.png
 app/static/positive_wordcloud.png
 gunicorn.service
+app/uploads/

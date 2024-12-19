@@ -1,16 +1,13 @@
-from flask import Blueprint, make_response, render_template, request, redirect, url_for, send_from_directory
+from flask import Blueprint, make_response, render_template, request, redirect, url_for
 from .model import analyze, analyze_review
 from .utils import convert_to_serializable, delete_file, generate_wordcloud, load_results, save_file, save_results
-
-# Define the blueprint
-routes_bp = Blueprint("routes", __name__)
 
 # Configure o Blueprint para usar uma pasta de templates específica
 routes_bp = Blueprint(
     "sentiment_analysis",
     __name__,
     template_folder="templates",  # Caminho relativo para a pasta de templates do módulo
-    static_folder="static"        # Caminho relativo para a pasta de arquivos estáticos do módulo
+    static_folder="static",        # Caminho relativo para a pasta de arquivos estáticos do módulo
 )
 
 @routes_bp.route('/css/<filename>')

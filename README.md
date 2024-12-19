@@ -44,7 +44,7 @@ tqdm==4.67.0
 
 1. Clone the repository:
 ```bash
-    git clone https://github.com/lucassoares-eng/sentiment-analysis.git
+    git clone https://github.com/lucassoares-eng/sentiment_analysis.git
 ```
 
 2. Install the dependencies:
