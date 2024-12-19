@@ -127,7 +127,7 @@
         </div>
         
         <!-- Sidebar with narrow bar -->
-        <div class="side-menu">
+        <div class="side-menu" id="sideMenu">
             <!-- Arrow indicator -->
             <div class="arrow-indicator"></div>
             <!-- Menu header (hidden by default) -->
@@ -365,6 +365,15 @@
             document.getElementById('radarChart'),
             config
         );
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const sideMenu = document.getElementById("sideMenu");
+
+            sideMenu.addEventListener("click", function () {
+                // Alterna a classe 'expanded' no menu
+                sideMenu.classList.toggle("expanded");
+            });
+        });
 
         // Automatically submit the form when a file is selected
         function submitForm() {

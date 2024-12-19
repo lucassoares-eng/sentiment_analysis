@@ -250,6 +250,10 @@ h2 {
     width: 300px;
 }
 
+.side-menu.expanded {
+    width: 300px;
+}
+
 /* Modern arrow indicator */
 .arrow-indicator {
     position: absolute;
