@@ -368,10 +368,31 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             const sideMenu = document.getElementById("sideMenu");
+            let startX = 0;
 
+            // Evento para clique no menu
             sideMenu.addEventListener("click", function () {
-                // Alterna a classe 'expanded' no menu
                 sideMenu.classList.toggle("expanded");
+            });
+
+            // Eventos de toque
+            document.addEventListener("touchstart", function (e) {
+                startX = e.touches[0].clientX; // Captura a posição inicial do toque
+            });
+
+            document.addEventListener("touchmove", function (e) {
+                const currentX = e.touches[0].clientX;
+                const diffX = currentX - startX;
+
+                // Se o toque deslizar para a direita e o menu não estiver expandido
+                if (diffX > 50 && !sideMenu.classList.contains("expanded")) {
+                    sideMenu.classList.add("expanded");
+                }
+
+                // Se o toque deslizar para a esquerda e o menu estiver expandido
+                if (diffX < -50 && sideMenu.classList.contains("expanded")) {
+                    sideMenu.classList.remove("expanded");
+                }
             });
         });
 
