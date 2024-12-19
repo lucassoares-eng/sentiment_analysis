@@ -21,7 +21,6 @@ This project was built with the following technologies:
 - NumPy and pandas: Utilized for efficient data manipulation and analysis.
 - NLTK and spaCy: Used for text processing, tokenization, and linguistic analysis.
 - Matplotlib and wordcloud: Libraries for creating visualizations (e.g., word clouds).
-- Flask: A lightweight WSGI web application framework for Python.
 
 ### Python Dependencies
 
