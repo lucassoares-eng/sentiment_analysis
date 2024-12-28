@@ -120,4 +120,4 @@ If you have questions or suggestions, feel free to reach out:
 
 Email: lucasjs.eng@gmail.com
 
-LinkedIn: https://www.linkedin.com/in/lucas-de-jesus-soares-33486b42/
+LinkedIn: [https://www.linkedin.com/in/lucas-soares-33486b42/](https://www.linkedin.com/in/lucas-soares-33486b42/)
